@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Certificate of Completion - Emma Rodriguez | UPSTAFF Academy</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&amp;family=Montserrat:wght@300;400;600;700&amp;family=Playfair+Display:wght@700&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .font-certificate-title {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.1em;
+            color: #0f172a;
+        }
+
+        .font-recipient-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #080E2C;
+            text-transform: uppercase;
+        }
+
+        .font-body-text {
+            font-family: 'Montserrat', sans-serif;
+            color: #334155;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            @page {
+                size: landscape;
+                margin: 0;
+            }
+
+            html,
+            body {
+                height: auto;
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+
+            body {
+                display: block;
+                padding: 0 !important;
+                margin: 0 !important;
+                min-height: 0 !important;
+                background: white;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .certificate-container {
+                position: relative;
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: auto;
+                border: none;
+                page-break-after: avoid;
+                page-break-before: avoid;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+        }
+
+        /* SCREEN STYLES */
+        body {
+            background: #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px;
+            margin: 0;
+        }
+
+        .certificate-container {
+            width: 1000px;
+            max-width: 100%;
+            position: relative;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            background-image: url('/cert/general-bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .signature-line {
+            border-top: 2px solid #080E2C;
+            width: 200px;
+            margin-bottom: 8px;
+        }
+
+        .certificate-content {
+            padding: 60px 80px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .certificate-content {
+                padding: 30px 40px;
+            }
+
+            .font-recipient-name {
+                font-size: 1.8rem;
+            }
+
+            .font-certificate-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="no-print fixed top-4 right-4 z-50 flex gap-3">
+        <button onclick="window.print()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow-md flex items-center gap-2 transition cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                </path>
+            </svg>
+            Print / Save as PDF
+        </button>
+        <a href="#"
+            class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg shadow-md flex items-center gap-2 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div class="certificate-container" id="certificate">
+        <div class="certificate-content">
+            <div class="mb-8">
+                <h1 class="font-certificate-title text-6xl font-bold mb-2 pt-12">CERTIFICATE</h1>
+                <h2 class="font-certificate-title text-3xl font-normal uppercase tracking-[0.2em]">Of Completion</h2>
+            </div>
+
+            <div class="mb-6">
+                <p class="font-body-text italic text-lg mb-4">This certificate is proudly presented to</p>
+                <div>
+                    <h3 class="font-recipient-name">EMMA RODRIGUEZ</h3>
+                    <div class="w-10/12 h-[1px] bg-slate-300 mx-auto mt-1"></div>
+                </div>
+            </div>
+
+            <div class="max-w-2xl mx-auto">
+                <p class="font-body-text text-base leading-relaxed">
+                    for successfully completing the course <strong>Strategic Product Leadership & Innovation</strong>
+                    with a final score of <strong>92%</strong>
+                    (5/5 quizzes passed).
+                </p>
+                <p class="font-body-text text-sm text-gray-600 mt-3">
+                    Course Category: Business Strategy & Leadership |
+                    Difficulty: Advanced
+                </p>
+            </div>
+
+            <div class="flex justify-center gap-28 mt-10">
+                <div class="flex flex-col items-center">
+                    <div class="signature-line"></div>
+                    <p class="font-body-text font-bold text-sm tracking-wide">ARIEL GORDON</p>
+                    <p class="font-body-text text-[10px] uppercase tracking-widest text-slate-500">CEO</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="signature-line"></div>
+                    <p class="font-body-text font-bold text-sm tracking-wide">RAINALYN ALCUIZAR </p>
+                    <p class="font-body-text text-[10px] uppercase tracking-widest text-slate-500">REPRESENTATIVE OFFICE
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-gray-500">
+                <p class="font-body-text text-[10px] text-gray-600">
+                    Certificate No: UPSTAFF-CERT-24E9A-2025LDR |
+                    Issued: March 20, 2025 |
+                    Valid Until: March 20, 2026
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
