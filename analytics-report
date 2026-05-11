@@ -73,10 +73,10 @@
             </div>
         </div>
 
-        <!-- Tabs -->
+       <!-- Tabs -->
         <div class="flex gap-3 mb-6 border-b border-gray-200 pb-2">
             <button id="tableViewBtn"
-                class="tab-active inline-flex items-center gap-2 px-5 py-2.5 rounded-t-lg text-sm font-medium transition-all duration-150 border-b-2 border-transparent">
+                class="tab-active inline-flex items-center gap-2 px-5 py-2.5 rounded-t-lg text-sm font-medium transition-all duration-150 border-b-2 border-gray-200 bg-white text-gray-700">
                 <i class="fas fa-table text-sm"></i> Table View
             </button>
             <button id="analyticsViewBtn"
