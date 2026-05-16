@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin Dashboard | Request Retake + Archives</title>
+    <!-- Tailwind CSS v3 + Font Awesome 6 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .modal-transition {
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .overflow-x-auto::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .overflow-x-auto::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .overflow-x-auto::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .tab-active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .tab-active i {
+            color: white;
+        }
+
+        .tab-inactive {
+            background-color: white;
+            color: #4b5563;
+            border-color: #e5e7eb;
+        }
+
+        .tab-inactive:hover {
+            background-color: #f9fafb;
+        }
+
+        /* No hover effect for archived table rows */
+        .archived-row-no-hover {
+            transition: none;
+        }
+
+        .archived-row-no-hover:hover {
+            background-color: transparent !important;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans antialiased">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 tracking-tight">Request Retake</h1>
+                <p class="text-sm text-gray-500 mt-0.5">Review employee retake requests and manage archived rejections
+                </p>
+            </div>
+        </div>
+
+        <!-- Tabs: Pending Requests / Archives Request -->
+        <div class="flex gap-3 mb-6 border-b border-gray-200 pb-2">
+            <button id="pendingTabBtn"
+                class="tab-active inline-flex items-center gap-2 px-5 py-2.5 rounded-t-lg text-sm font-medium transition-all duration-150 border-b-2 border-transparent">
+                <i class="fas fa-clock text-sm"></i> Pending Requests
+            </button>
+            <button id="archivedTabBtn"
+                class="tab-inactive inline-flex items-center gap-2 px-5 py-2.5 rounded-t-lg text-sm font-medium transition-all duration-150 border border-gray-200 bg-white text-gray-700 ">
+                <i class="fas fa-archive text-sm"></i> Archives Request
+            </button>
+        </div>
+
+        <!-- Search Bar (filters current active table) -->
+        <div class="mb-6">
+            <div class="relative max-w-md">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <input type="text" id="searchInput" placeholder="Search by employee name or course title..."
+                    class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm shadow-sm">
+            </div>
+        </div>
+
+        <!-- Pending Requests Table Container -->
+        <div id="pendingTableContainer">
+            <div class="bg-white shadow-lg rounded-xl border border-gray-200 overflow-hidden">
+                <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center flex-wrap gap-2">
+                    <div class="flex items-center gap-3">
+                        <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <i class="fas fa-hourglass-half text-amber-500"></i>
+                            Pending Retake Requests
+                        </h2>
+                        <span id="pendingCountBadge"
+                            class="bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-0.5 rounded-full">0</span>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-[900px] w-full text-sm text-left text-gray-700">
+                        <thead
+                            class="bg-gradient-to-r from-gray-800 to-gray-900 text-white uppercase text-xs tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4">ID</th>
+                                <th class="px-6 py-4">User</th>
+                                <th class="px-6 py-4">Course Title</th>
+                                <th class="px-6 py-4">Date Request</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingTableBody" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Archived Requests Table Container (hidden by default) -->
+        <div id="archivedTableContainer" class="hidden">
+            <div class="bg-white shadow-lg rounded-xl border border-gray-200 overflow-hidden">
+                <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center flex-wrap gap-2">
+                    <div class="flex items-center gap-3">
+                        <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <i class="fas fa-archive text-gray-500"></i>
+                            Archived Retake Requests (Rejected)
+                        </h2>
+                        <span id="archivedCountBadge"
+                            class="bg-gray-100 text-gray-700 text-xs font-medium px-2.5 py-0.5 rounded-full">0</span>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-[900px] w-full text-sm text-left text-gray-700">
+                        <thead
+                            class="bg-gradient-to-r from-gray-700 to-gray-800 text-white uppercase text-xs tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4">ID</th>
+                                <th class="px-6 py-4">User</th>
+                                <th class="px-6 py-4">Course Title</th>
+                                <th class="px-6 py-4">Date Request</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="archivedTableBody" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: View Request Details -->
+    <div id="requestModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-transition invisible opacity-0"
+        style="background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px);">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-auto">
+            <div class="flex justify-between items-center border-b border-gray-200 px-6 py-4">
+                <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i
+                        class="fas fa-clipboard-list text-amber-500"></i> Retake Request Details</h3>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600"><i
+                        class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div id="modalContent"></div>
+                <div id="modalActionButtons"
+                    class="border-t border-gray-100 pt-4 flex flex-col sm:flex-row justify-end gap-3 mt-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- STATIC DATA ----------
+        const initialPending = [
+            { id: 101, firstname: "Emma", lastname: "Johnson", username: "emma.j", email: "emma.johnson@example.com", profile_picture_url: null, courseTitle: "Advanced JavaScript Frameworks", dateRequest: "2025-04-10", reason: "I was unable to complete the final project due to a family emergency. I have since reviewed the material and would like a chance to retake the exam." },
+            { id: 102, firstname: "Michael", lastname: "Chen", username: "mike.chen", email: "michael.chen@example.com", profile_picture_url: null, courseTitle: "Data Structures & Algorithms", dateRequest: "2025-04-12", reason: "Scored 68% on the final exam, missing the passing threshold by 2%. I have since attended tutoring." },
+            { id: 103, firstname: "Sophia", lastname: "Rodriguez", username: "sophia.r", email: "sophia.rodriguez@example.com", profile_picture_url: null, courseTitle: "UI/UX Design Principles", dateRequest: "2025-04-14", reason: "Submitted my UX portfolio late due to technical issues with Adobe XD." },
+            { id: 104, firstname: "James", lastname: "Williams", username: "jwill", email: "james.williams@example.com", profile_picture_url: null, courseTitle: "Cloud Infrastructure (AWS)", dateRequest: "2025-04-15", reason: "Failed the hands-on lab section because of misconfiguration. I have practiced more." },
+            { id: 105, firstname: "Olivia", lastname: "Martinez", username: "olivia.m", email: "olivia.martinez@example.com", profile_picture_url: null, courseTitle: "Python for Data Science", dateRequest: "2025-04-16", reason: "Missed the deadline for the final assignment due to work commitments." },
+            { id: 106, firstname: "Liam", lastname: "Brown", username: "liam.b", email: "liam.brown@example.com", profile_picture_url: null, courseTitle: "Cybersecurity Fundamentals", dateRequest: "2025-04-18", reason: "My exam submission was corrupted and couldn't resubmit on time." }
+        ];
+
+        // Data stores
+        let pendingRequests = [...initialPending];
+        let archivedRequests = [];
+
+        // UI state
+        let activeTab = "pending";
+        let searchTerm = "";
+
+        // DOM elements
+        const pendingContainer = document.getElementById("pendingTableContainer");
+        const archivedContainer = document.getElementById("archivedTableContainer");
+        const pendingTabBtn = document.getElementById("pendingTabBtn");
+        const archivedTabBtn = document.getElementById("archivedTabBtn");
+        const pendingTableBody = document.getElementById("pendingTableBody");
+        const archivedTableBody = document.getElementById("archivedTableBody");
+        const pendingCountBadge = document.getElementById("pendingCountBadge");
+        const archivedCountBadge = document.getElementById("archivedCountBadge");
+        const searchInput = document.getElementById("searchInput");
+
+        // Modal elements
+        const modal = document.getElementById("requestModal");
+        const modalContentDiv = document.getElementById("modalContent");
+        const modalActionDiv = document.getElementById("modalActionButtons");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+
+        let currentModalRequest = null;
+        let currentModalSourceTab = null;
+
+        // Helper functions
+        function getFullName(req) { return `${req.firstname} ${req.lastname}`; }
+        function formatDate(dateStr) { if (!dateStr) return "N/A"; const p = dateStr.split('-'); return p.length === 3 ? `${p[1]}/${p[2]}/${p[0]}` : dateStr; }
+        function formatId(id) { return `#${id}`; }
+        function getAvatarHtml(req) {
+            const initial = req.firstname.charAt(0).toUpperCase();
+            if (req.profile_picture_url) return `<img src="${req.profile_picture_url}" class="w-full h-full object-cover">`;
+            return `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-500 to-amber-600 text-white font-bold text-base">${initial}</div>`;
+        }
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
+
+        // Filter requests based on search term
+        function filterRequests(requests) {
+            if (!searchTerm.trim()) return [...requests];
+            const term = searchTerm.trim().toLowerCase();
+            return requests.filter(req => getFullName(req).toLowerCase().includes(term) || (req.courseTitle || "").toLowerCase().includes(term));
+        }
+
+        // Render pending table (hover effect preserved)
+        function renderPendingTable() {
+            const filtered = filterRequests(pendingRequests);
+            pendingCountBadge.innerText = `${filtered.length} request${filtered.length !== 1 ? 's' : ''}`;
+            if (filtered.length === 0) {
+                pendingTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-500"><i class="fas fa-inbox mr-2"></i> No pending requests</td></tr>`;
+                return;
+            }
+            let html = '';
+            filtered.forEach(req => {
+                html += `<tr class="hover:bg-amber-50 transition-colors duration-150">
+                    <td class="px-6 py-4 font-medium">${formatId(req.id)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shadow-sm">${getAvatarHtml(req)}</div><div><div class="font-medium">${escapeHtml(getFullName(req))}</div><div class="text-xs text-gray-500">@${escapeHtml(req.username)}</div></div></div></td>
+                    <td class="px-6 py-4">${escapeHtml(req.courseTitle)}</td>
+                    <td class="px-6 py-4">${formatDate(req.dateRequest)}</td>
+                    <td class="px-6 py-4"><span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border bg-amber-100 text-amber-800 border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Pending</span></td>
+                    <td class="px-6 py-4 text-center"><button class="view-request-btn bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm px-4 py-2 rounded-lg flex items-center gap-2 mx-auto" data-id="${req.id}" data-tab="pending"><i class="fas fa-eye"></i> View Request</button></td>
+                </tr>`;
+            });
+            pendingTableBody.innerHTML = html;
+            attachViewButtons();
+        }
+
+        // Render archived table (NO hover effect)
+        function renderArchivedTable() {
+            const filtered = filterRequests(archivedRequests);
+            archivedCountBadge.innerText = `${filtered.length} request${filtered.length !== 1 ? 's' : ''}`;
+            if (filtered.length === 0) {
+                archivedTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-500"><i class="fas fa-archive mr-2"></i> No archived requests</td></tr>`;
+                return;
+            }
+            let html = '';
+            filtered.forEach(req => {
+                // Removed hover class entirely; also added a class to ensure no background change
+                html += `<tr class="archived-row-no-hover">
+                    <td class="px-6 py-4 font-medium">${formatId(req.id)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shadow-sm">${getAvatarHtml(req)}</div><div><div class="font-medium">${escapeHtml(getFullName(req))}</div><div class="text-xs text-gray-500">@${escapeHtml(req.username)}</div></div></div></td>
+                    <td class="px-6 py-4">${escapeHtml(req.courseTitle)}</td>
+                    <td class="px-6 py-4">${formatDate(req.dateRequest)}</td>
+                    <td class="px-6 py-4"><span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border bg-red-100 text-red-700 border-red-200"><i class="fas fa-times-circle text-xs"></i> Rejected</span></td>
+                    <td class="px-6 py-4 text-center"><button class="restore-request-btn bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-lg flex items-center gap-2 mx-auto" data-id="${req.id}" data-tab="archived"><i class="fas fa-undo-alt"></i> Restore</button></td>
+                </tr>`;
+            });
+            archivedTableBody.innerHTML = html;
+            attachRestoreButtons();
+        }
+
+        function attachViewButtons() {
+            document.querySelectorAll('.view-request-btn').forEach(btn => {
+                btn.removeEventListener('click', handleViewClick);
+                btn.addEventListener('click', handleViewClick);
+            });
+        }
+
+        function handleViewClick(e) {
+            const btn = e.currentTarget;
+            const id = parseInt(btn.getAttribute('data-id'));
+            const sourceTab = btn.getAttribute('data-tab');
+            let request = null;
+            if (sourceTab === 'pending') request = pendingRequests.find(r => r.id === id);
+            else request = archivedRequests.find(r => r.id === id);
+            if (request) openModal(request, sourceTab);
+        }
+
+        function attachRestoreButtons() {
+            document.querySelectorAll('.restore-request-btn').forEach(btn => {
+                btn.removeEventListener('click', handleRestoreClick);
+                btn.addEventListener('click', handleRestoreClick);
+            });
+        }
+
+        function handleRestoreClick(e) {
+            const btn = e.currentTarget;
+            const id = parseInt(btn.getAttribute('data-id'));
+            const requestIndex = archivedRequests.findIndex(r => r.id === id);
+            if (requestIndex !== -1) {
+                const restored = archivedRequests[requestIndex];
+                archivedRequests.splice(requestIndex, 1);
+                pendingRequests.push(restored);
+                pendingRequests.sort((a, b) => a.id - b.id);
+                refreshCurrentView();
+                alert(`🔄 Request #${id} has been restored to Pending.`);
+            }
+        }
+
+        function openModal(request, sourceTab) {
+            currentModalRequest = request;
+            currentModalSourceTab = sourceTab;
+            const fullName = getFullName(request);
+            const formattedDate = formatDate(request.dateRequest);
+            const reasonText = request.reason || "No additional reason provided.";
+            modalContentDiv.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-start gap-3 pb-2 border-b border-gray-100">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white font-bold text-lg">${request.firstname.charAt(0).toUpperCase()}</div>
+                        <div><p class="font-bold text-gray-800">${escapeHtml(fullName)}</p><p class="text-xs text-gray-500">@${escapeHtml(request.username)} · ${escapeHtml(request.email)}</p></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div class="bg-gray-50 p-2 rounded-lg"><span class="text-xs text-gray-500">Course Title</span><br><span class="font-medium">${escapeHtml(request.courseTitle)}</span></div>
+                        <div class="bg-gray-50 p-2 rounded-lg"><span class="text-xs text-gray-500">Request Date</span><br><span class="font-medium">${formattedDate}</span></div>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                        <div class="flex items-start gap-2"><i class="fas fa-comment-dots text-amber-600 mt-0.5"></i><div><p class="text-xs font-semibold text-amber-800">Reason for Retake</p><p class="text-gray-700 text-sm mt-1">${escapeHtml(reasonText)}</p></div></div>
+                    </div>
+                </div>
+            `;
+            if (sourceTab === 'pending') {
+                modalActionDiv.innerHTML = `
+                    <button id="modalApproveBtn" class="inline-flex justify-center items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-lg bg-green-600 text-white hover:bg-green-700"><i class="fas fa-check-circle"></i> Approve Retake</button>
+                    <button id="modalRejectBtn" class="inline-flex justify-center items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-lg bg-red-600 text-white hover:bg-red-700"><i class="fas fa-times-circle"></i> Reject Request</button>
+                `;
+                document.getElementById("modalApproveBtn")?.addEventListener("click", approveRequest);
+                document.getElementById("modalRejectBtn")?.addEventListener("click", rejectRequest);
+            } else {
+                modalActionDiv.innerHTML = `
+                    <button id="modalRestoreBtn" class="inline-flex justify-center items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"><i class="fas fa-undo-alt"></i> Restore to Pending</button>
+                    <button id="modalCloseOnlyBtn" class="inline-flex justify-center items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-lg bg-gray-500 text-white hover:bg-gray-600">Close</button>
+                `;
+                document.getElementById("modalRestoreBtn")?.addEventListener("click", restoreFromArchived);
+                document.getElementById("modalCloseOnlyBtn")?.addEventListener("click", closeModal);
+            }
+            modal.classList.remove("invisible", "opacity-0");
+            modal.classList.add("visible", "opacity-100");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal() {
+            modal.classList.add("invisible", "opacity-0");
+            modal.classList.remove("visible", "opacity-100");
+            document.body.style.overflow = "";
+            currentModalRequest = null;
+            currentModalSourceTab = null;
+        }
+
+        function approveRequest() {
+            if (currentModalRequest && currentModalSourceTab === 'pending') {
+                alert(`✅ APPROVE RETAKE\n\nEmployee "${getFullName(currentModalRequest)}" has been APPROVED for retake in course:\n"${currentModalRequest.courseTitle}".\n\nReason: ${currentModalRequest.reason}\n\n(Static Demo: request removed from pending list.)`);
+                const idx = pendingRequests.findIndex(r => r.id === currentModalRequest.id);
+                if (idx !== -1) pendingRequests.splice(idx, 1);
+                refreshCurrentView();
+                closeModal();
+            } else { closeModal(); }
+        }
+
+        function rejectRequest() {
+            if (currentModalRequest && currentModalSourceTab === 'pending') {
+                alert(`❌ REJECT RETAKE REQUEST\n\nEmployee "${getFullName(currentModalRequest)}" retake request for course "${currentModalRequest.courseTitle}" has been REJECTED and moved to Archives.`);
+                const idx = pendingRequests.findIndex(r => r.id === currentModalRequest.id);
+                if (idx !== -1) {
+                    const rejectedReq = pendingRequests[idx];
+                    pendingRequests.splice(idx, 1);
+                    archivedRequests.push(rejectedReq);
+                    archivedRequests.sort((a, b) => a.id - b.id);
+                    refreshCurrentView();
+                }
+                closeModal();
+            } else { closeModal(); }
+        }
+
+        function restoreFromArchived() {
+            if (currentModalRequest && currentModalSourceTab === 'archived') {
+                const idx = archivedRequests.findIndex(r => r.id === currentModalRequest.id);
+                if (idx !== -1) {
+                    const restored = archivedRequests[idx];
+                    archivedRequests.splice(idx, 1);
+                    pendingRequests.push(restored);
+                    pendingRequests.sort((a, b) => a.id - b.id);
+                    refreshCurrentView();
+                    alert(`🔄 Request #${restored.id} restored to Pending.`);
+                }
+                closeModal();
+            } else { closeModal(); }
+        }
+
+        function refreshCurrentView() {
+            if (activeTab === "pending") {
+                renderPendingTable();
+            } else {
+                renderArchivedTable();
+            }
+        }
+
+        function setActiveTab(tab) {
+            activeTab = tab;
+            if (tab === "pending") {
+                pendingContainer.classList.remove("hidden");
+                archivedContainer.classList.add("hidden");
+                pendingTabBtn.classList.add("tab-active", "bg-blue-600", "text-white");
+                pendingTabBtn.classList.remove("tab-inactive", "bg-white", "text-gray-700", "border-gray-200");
+                archivedTabBtn.classList.add("tab-inactive", "bg-white", "text-gray-700", "border", "border-gray-200");
+                archivedTabBtn.classList.remove("tab-active", "bg-blue-600", "text-white");
+                renderPendingTable();
+            } else {
+                pendingContainer.classList.add("hidden");
+                archivedContainer.classList.remove("hidden");
+                archivedTabBtn.classList.add("tab-active", "bg-blue-600", "text-white");
+                archivedTabBtn.classList.remove("tab-inactive", "bg-white", "text-gray-700", "border-gray-200");
+                pendingTabBtn.classList.add("tab-inactive", "bg-white", "text-gray-700", "border", "border-gray-200");
+                pendingTabBtn.classList.remove("tab-active", "bg-blue-600", "text-white");
+                renderArchivedTable();
+            }
+        }
+
+        function onSearch() {
+            searchTerm = searchInput.value;
+            refreshCurrentView();
+        }
+
+        // Event listeners
+        pendingTabBtn.addEventListener("click", () => setActiveTab("pending"));
+        archivedTabBtn.addEventListener("click", () => setActiveTab("archived"));
+        searchInput.addEventListener("input", onSearch);
+        closeModalBtn.addEventListener("click", closeModal);
+        modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+        document.addEventListener("keydown", (e) => { if (e.key === "Escape" && modal.classList.contains("visible")) closeModal(); });
+
+        // Initial render
+        setActiveTab("pending");
+    </script>
+</body>
+
+</html>
