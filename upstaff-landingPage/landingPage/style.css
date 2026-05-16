@@ -1,0 +1,165 @@
+/* Minimal style block — only for things Tailwind can't express */
+
+/* 1. Base font */
+body {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 300;
+}
+
+/* ═══════════════════════════════════════════════
+   2. Theme CSS variables
+   Default = light. Add class "dark" to <html> for dark.
+═══════════════════════════════════════════════ */
+:root {
+  --page-bg:          #f5f2ee;
+  --page-text:        #1a1410;
+  --muted:            #5a4a3e;
+  --accent:           #1a8ab5;
+  --accent-teal:      #0e9b92;
+  --accent-60:        rgba(26,138,181,0.6);
+  --header-bg:        rgba(245,242,238,0.92);
+  --header-border:    rgba(26,20,16,0.09);
+  --header-shadow:    0 1px 8px rgba(26,20,16,0.07);
+  --nav-text:         #6b5848;
+  --nav-hover:        #1a1410;
+  --section-bg:       #f5f2ee;
+  --grid-texture:     rgba(26,20,16,0.055);
+  --glow-color:       rgba(26,138,181,0.08);
+  --card-bg:          #ffffff;
+  --card-border:      rgba(26,20,16,0.08);
+  --card-hover-bg:    rgba(26,138,181,0.04);
+  --card-hover-border:rgba(26,138,181,0.22);
+  --icon-bg:          rgba(26,138,181,0.08);
+  --icon-border:      rgba(26,138,181,0.18);
+  --icon-hover-bg:    rgba(26,138,181,0.14);
+  --cta-divider:      rgba(26,20,16,0.08);
+  --cta-btn-bg:       #1a8ab5;
+  --cta-btn-text:     #ffffff;
+  --cta-btn-border:   #1a8ab5;
+  --cta-btn-hover-bg: #1478a0;
+  --about-bg:         linear-gradient(180deg,#f5f2ee 0%,#eaf3f8 50%,#f5f2ee 100%);
+  --section-divider:  rgba(26,138,181,0.18);
+  --bottom-divider:   rgba(26,138,181,0.14);
+  --stat-bg:          #ffffff;
+  --stat-grid-bg:     rgba(26,20,16,0.055);
+  --stat-grid-border: rgba(26,20,16,0.06);
+  --story-label:      rgba(26,20,16,0.30);
+  --val-icon-bg:      rgba(26,138,181,0.08);
+  --val-icon-border:  rgba(26,138,181,0.18);
+  --callout-border:       rgba(26,138,181,0.15);
+  --callout-bg:           linear-gradient(135deg,rgba(26,138,181,0.06) 0%,rgba(14,155,146,0.04) 100%);
+  --callout-grid:         rgba(26,138,181,0.12);
+  --callout-btn-text:     #1a1410;
+  --callout-btn-border:   rgba(26,20,16,0.18);
+  --callout-btn-hover-bg: rgba(26,20,16,0.05);
+  --callout-btn-hover-border: rgba(26,20,16,0.38);
+  --pill-border:      rgba(26,20,16,0.14);
+  --pill-text:        #1a1410;
+  --pill-hover-bg:    rgba(26,138,181,0.08);
+  --pill-hover-border:#1a8ab5;
+}
+
+html.dark {
+  --page-bg:          #0d0c0b;
+  --page-text:        #e8d9c0;
+  --muted:            #a89880;
+  --accent:           #87ceeb;
+  --accent-teal:      #4ecdc4;
+  --accent-60:        rgba(135,206,235,0.6);
+  --header-bg:        rgba(13,12,11,0.8);
+  --header-border:    rgba(232,217,192,0.12);
+  --header-shadow:    none;
+  --nav-text:         #a89880;
+  --nav-hover:        #e8d9c0;
+  --section-bg:       #0d0c0b;
+  --grid-texture:     rgba(232,217,192,0.4);
+  --glow-color:       rgba(135,206,235,0.04);
+  --card-bg:          rgba(255,255,255,0.02);
+  --card-border:      rgba(232,217,192,0.08);
+  --card-hover-bg:    rgba(135,206,235,0.04);
+  --card-hover-border:rgba(135,206,235,0.2);
+  --icon-bg:          rgba(135,206,235,0.08);
+  --icon-border:      rgba(135,206,235,0.15);
+  --icon-hover-bg:    rgba(135,206,235,0.14);
+  --cta-divider:      rgba(232,217,192,0.07);
+  --cta-btn-bg:       rgba(135,206,235,0.1);
+  --cta-btn-text:     #87ceeb;
+  --cta-btn-border:   rgba(135,206,235,0.25);
+  --cta-btn-hover-bg: rgba(41,167,206,0.85);
+  --about-bg:         linear-gradient(180deg,#0d0c0b 0%,#0a1520 50%,#0d0c0b 100%);
+  --section-divider:  rgba(135,206,235,0.2);
+  --bottom-divider:   rgba(135,206,235,0.12);
+  --stat-bg:          #0d0c0b;
+  --stat-grid-bg:     rgba(232,217,192,0.06);
+  --stat-grid-border: rgba(232,217,192,0.06);
+  --story-label:      rgba(232,217,192,0.4);
+  --val-icon-bg:      rgba(135,206,235,0.08);
+  --val-icon-border:  rgba(135,206,235,0.12);
+  --callout-border:       rgba(135,206,235,0.12);
+  --callout-bg:           linear-gradient(135deg,rgba(135,206,235,0.05) 0%,rgba(78,205,196,0.03) 100%);
+  --callout-grid:         rgba(135,206,235,0.5);
+  --callout-btn-text:     #e8d9c0;
+  --callout-btn-border:   rgba(232,217,192,0.2);
+  --callout-btn-hover-bg: rgba(255,255,255,0.05);
+  --callout-btn-hover-border: rgba(255,255,255,0.4);
+  --pill-border:      rgba(232,217,192,0.12);
+  --pill-text:        #e8d9c0;
+  --pill-hover-bg:    rgba(124,58,237,0.15);
+  --pill-hover-border:#87ceeb;
+}
+
+/* Header transition */
+header {
+  box-shadow: var(--header-shadow);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Smooth theme transitions */
+body, section, footer { transition: background-color 0.25s ease; }
+p, h1, h2, h3, h4, h5, span, a, li, nav { transition: color 0.25s ease; }
+div { transition: background-color 0.25s ease, border-color 0.25s ease; }
+
+/* 3. Keyframe animations */
+@keyframes infiniteSlide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* 4. Slideshow track */
+.hero-slideshow-track {
+  width: calc(100vw * 26);
+  animation: infiniteSlide 52s linear infinite;
+}
+
+/* 5. Theme toggle button */
+#theme-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid var(--header-border);
+  background: transparent;
+  color: var(--nav-text);
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+#theme-toggle:hover {
+  background: var(--icon-bg);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+#theme-toggle svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.4s ease;
+}
+html.dark #theme-toggle svg {
+  transform: rotate(20deg);
+}
