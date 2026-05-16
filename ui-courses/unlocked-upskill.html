@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Upskilling Courses | UpStaff Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .course-card {
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-start-course {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .btn-start-course:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-2px);
+        }
+
+        .btn-request-retake {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .btn-request-retake:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px);
+        }
+
+        .btn-download-cert {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .btn-download-cert:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        .status-spacer {
+            height: 68px;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 to-gray-100 antialiased">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
+        <!-- Header section -->
+        <div class="mb-8 fade-in">
+            <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-chart-line text-blue-500 text-xl"></i>
+                        </div>
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">Upskilling Courses
+                        </h1>
+                    </div>
+                    <p class="text-gray-600 text-base max-w-2xl">Specialized programs to advance your career. Track your
+                        progress and earn certificates.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success banner (unlocked state) -->
+        <div class="mb-8 bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3 fade-in">
+            <i class="fas fa-trophy text-green-500 text-xl mt-0.5"></i>
+            <div>
+                <p class="text-sm font-semibold text-green-800">🎉 Congratulations! Upskilling Courses Unlocked! 🎉</p>
+                <p class="text-sm text-green-700">You have successfully passed all general courses. You can now access
+                    specialized upskilling courses to advance your career!</p>
+            </div>
+        </div>
+
+        <!-- Filter and Search Bar -->
+        <div class="mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between fade-in">
+            <!-- Status Filter -->
+            <div
+                class="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm border border-gray-200">
+                <i class="fas fa-filter text-gray-500 text-sm"></i>
+                <select id="statusFilter"
+                    class="text-sm font-medium text-gray-700 bg-transparent focus:outline-none cursor-pointer">
+                    <option value="all">All Courses</option>
+                    <option value="not_started">Not Started</option>
+                    <option value="passed">Passed</option>
+                    <option value="failed">Failed</option>
+                </select>
+            </div>
+            <!-- Search Input -->
+            <div class="relative w-full sm:w-80">
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input type="text" id="searchInput" placeholder="Search by title or description..."
+                    class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+            </div>
+        </div>
+
+        <!-- Course Grid Container -->
+        <div id="coursesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 fade-in">
+            <!-- Each card has data-status, data-title, data-description for filtering -->
+
+            <!-- CARD 1: PASSED - Advanced Data Architecture -->
+            <div class="course-card bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl" data-status="passed"
+                data-title="Advanced Data Architecture"
+                data-description="Deep dive into scalable database structures, data lakes, and cloud storage optimization for enterprise systems.">
+                <div class="relative h-44 overflow-hidden">
+                    <img class="w-full h-full object-cover"
+                        src="https://placehold.co/600x300/2563eb/white?text=Data+Architecture" alt="Data Architecture">
+                    <div
+                        class="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                        <i class="fas fa-check-circle text-xs mr-1"></i> PASSED
+                    </div>
+                    <div
+                        class="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-xs font-bold shadow-md">
+                        <i class="fas fa-star text-yellow-500 mr-1"></i> 94%
+                    </div>
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Data
+                            Engineering</span>
+                        <span
+                            class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">Advanced</span>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Advanced Data Architecture</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">Deep dive into scalable database structures,
+                        data lakes, and cloud storage optimization for enterprise systems.</p>
+                    <div class="flex items-center gap-2 text-green-700 mb-4 bg-green-50 rounded-lg px-3 py-2">
+                        <i class="fas fa-award text-sm"></i>
+                        <span class="text-xs font-medium">Certificate earned — 94% score</span>
+                    </div>
+                    <div class="mt-auto">
+                        <button onclick="downloadCertificateDemo('Advanced Data Architecture')"
+                            class="btn-download-cert w-full py-2.5 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-md transition-all">
+                            <i class="fas fa-download"></i> Download Certificate
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: FAILED - Cloud Maestro -->
+            <div class="course-card bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl" data-status="failed"
+                data-title="Cloud Maestro"
+                data-description="Master AWS and Azure deployment pipelines, infrastructure as code, and global hybrid cloud strategies.">
+                <div class="relative h-44 overflow-hidden">
+                    <img class="w-full h-full object-cover"
+                        src="https://placehold.co/600x300/7c3aed/white?text=Cloud+Maestro" alt="Cloud Maestro">
+                    <div
+                        class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                        <i class="fas fa-times-circle text-xs mr-1"></i> FAILED
+                    </div>
+                    <div
+                        class="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-xs font-bold shadow-md">
+                        <i class="fas fa-star text-yellow-500 mr-1"></i> 62%
+                    </div>
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span
+                            class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Cloud</span>
+                        <span
+                            class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">Expert</span>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Cloud Maestro</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">Master AWS and Azure deployment pipelines,
+                        infrastructure as code, and global hybrid cloud strategies.</p>
+                    <div class="flex items-center gap-2 text-red-600 mb-4 bg-red-50 rounded-lg px-3 py-2">
+                        <i class="fas fa-exclamation-triangle text-sm"></i>
+                        <span class="text-xs font-medium">Failed - 62% (Need 70% to pass)</span>
+                    </div>
+                    <div class="mt-auto">
+                        <button onclick="requestRetakeDemo('Cloud Maestro')"
+                            class="btn-request-retake w-full py-2.5 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-md transition-all">
+                            <i class="fas fa-redo-alt"></i> Request Retake
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 3: NOT STARTED (Unlocked) - AI & Machine Learning Practitioner -->
+            <div class="course-card bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl"
+                data-status="not_started" data-title="AI & Machine Learning Practitioner"
+                data-description="Build and deploy ML models, work with TensorFlow, and implement real-world AI solutions.">
+                <div class="relative h-44 overflow-hidden">
+                    <img class="w-full h-full object-cover" src="https://placehold.co/600x300/06b6d4/white?text=AI+ML"
+                        alt="AI/ML">
+                    <div
+                        class="absolute top-3 left-3 bg-gray-700 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                        <i class="fas fa-unlock-alt text-xs mr-1"></i> Unlocked
+                    </div>
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Artificial
+                            Intelligence</span>
+                        <span
+                            class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">Advanced</span>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">AI & Machine Learning Practitioner</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">Build and deploy ML models, work with
+                        TensorFlow, and implement real-world AI solutions.</p>
+                    <div class="status-spacer"></div>
+                    <div class="mt-auto">
+                        <button onclick="startCourseDemo('AI & ML Practitioner')"
+                            class="btn-start-course w-full py-2.5 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-md transition-all">
+                            <i class="fas fa-play"></i> Start Course
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 4: PASSED - Cybersecurity Leadership -->
+            <div class="course-card bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl" data-status="passed"
+                data-title="Cybersecurity Leadership"
+                data-description="Incident response, risk management, compliance frameworks, and security architecture.">
+                <div class="relative h-44 overflow-hidden">
+                    <img class="w-full h-full object-cover"
+                        src="https://placehold.co/600x300/d946ef/white?text=Cyber+Leadership" alt="Cybersecurity">
+                    <div
+                        class="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                        <i class="fas fa-check-circle text-xs mr-1"></i> PASSED
+                    </div>
+                    <div
+                        class="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-xs font-bold shadow-md">
+                        <i class="fas fa-star text-yellow-500 mr-1"></i> 88%
+                    </div>
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span
+                            class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Security</span>
+                        <span
+                            class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">Expert</span>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Cybersecurity Leadership</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">Incident response, risk management, compliance
+                        frameworks, and security architecture.</p>
+                    <div class="flex items-center gap-2 text-green-700 mb-4 bg-green-50 rounded-lg px-3 py-2">
+                        <i class="fas fa-shield-alt text-sm"></i>
+                        <span class="text-xs font-medium">Certificate earned — 88% score</span>
+                    </div>
+                    <div class="mt-auto">
+                        <button onclick="downloadCertificateDemo('Cybersecurity Leadership')"
+                            class="btn-download-cert w-full py-2.5 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-md transition-all">
+                            <i class="fas fa-download"></i> Download Certificate
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 5: FAILED - Full-Stack Cloud Development -->
+            <div class="course-card bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl" data-status="failed"
+                data-title="Full-Stack Cloud Development"
+                data-description="Modern serverless applications, API gateways, frontend frameworks, and DevOps practices.">
+                <div class="relative h-44 overflow-hidden">
+                    <img class="w-full h-full object-cover"
+                        src="https://placehold.co/600x300/10b981/white?text=Full+Stack+Cloud" alt="Full Stack Cloud">
+                    <div
+                        class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                        <i class="fas fa-times-circle text-xs mr-1"></i> FAILED
+                    </div>
+                    <div
+                        class="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-xs font-bold shadow-md">
+                        <i class="fas fa-star text-yellow-500 mr-1"></i> 55%
+                    </div>
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span
+                            class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Development</span>
+                        <span
+                            class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">Intermediate</span>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Full-Stack Cloud Development</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">Modern serverless applications, API gateways,
+                        frontend frameworks, and DevOps practices.</p>
+                    <div class="flex items-center gap-2 text-red-600 mb-4 bg-red-50 rounded-lg px-3 py-2">
+                        <i class="fas fa-exclamation-triangle text-sm"></i>
+                        <span class="text-xs font-medium">Failed - 55% (Need 70% to pass)</span>
+                    </div>
+                    <div class="mt-auto">
+                        <button onclick="requestRetakeDemo('Full-Stack Cloud Development')"
+                            class="btn-request-retake w-full py-2.5 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-md transition-all">
+                            <i class="fas fa-redo-alt"></i> Request Retake
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 6: NOT STARTED (Unlocked) - Data Science & Analytics -->
+            <div class="course-card bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl"
+                data-status="not_started" data-title="Data Science & Analytics"
+                data-description="Statistical modeling, data visualization, and business intelligence with Python and R.">
+                <div class="relative h-44 overflow-hidden">
+                    <img class="w-full h-full object-cover"
+                        src="https://placehold.co/600x300/0f172a/white?text=Data+Science" alt="Data Science">
+                    <div
+                        class="absolute top-3 left-3 bg-gray-700 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                        <i class="fas fa-unlock-alt text-xs mr-1"></i> Unlocked
+                    </div>
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span
+                            class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Analytics</span>
+                        <span
+                            class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">Advanced</span>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Data Science & Analytics</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">Statistical modeling, data visualization, and
+                        business intelligence with Python and R.</p>
+                    <div class="status-spacer"></div>
+                    <div class="mt-auto">
+                        <button onclick="startCourseDemo('Data Science & Analytics')"
+                            class="btn-start-course w-full py-2.5 rounded-xl text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-md transition-all">
+                            <i class="fas fa-play"></i> Start Course
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No results message (hidden by default) -->
+        <div id="noResultsMessage" class="hidden text-center py-12 bg-white/50 rounded-2xl mt-6 fade-in">
+            <i class="fas fa-search text-gray-400 text-5xl mb-3"></i>
+            <p class="text-gray-500 text-lg">No courses match your filters.</p>
+            <p class="text-gray-400 text-sm mt-1">Try changing the status filter or search term.</p>
+        </div>
+    </div>
+
+    <!-- Toast notification container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
+
+    <script>
+        // Toast helper
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `px-5 py-3 rounded-xl text-white text-sm font-medium shadow-lg transform transition-all duration-300 flex items-center gap-2 ${type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-orange-600'}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2800);
+        }
+
+        // Demo actions
+        function startCourseDemo(courseName) {
+            showToast(`🚀 "${courseName}" started! You will be redirected to the learning path (demo).`, 'info');
+        }
+
+        function requestRetakeDemo(courseName) {
+            showToast(`✅ Retake request submitted for "${courseName}". Instructor will review.`, 'success');
+        }
+
+        function downloadCertificateDemo(courseName) {
+            showToast(`🎓 Downloading certificate for "${courseName}" (demo PDF).`, 'success');
+        }
+
+        // Filter and Search Logic
+        const statusFilter = document.getElementById('statusFilter');
+        const searchInput = document.getElementById('searchInput');
+        const coursesContainer = document.getElementById('coursesContainer');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        let allCards = Array.from(document.querySelectorAll('.course-card'));
+
+        function filterCourses() {
+            const selectedStatus = statusFilter.value;
+            const searchTerm = searchInput.value.trim().toLowerCase();
+
+            let visibleCount = 0;
+
+            allCards.forEach(card => {
+                const cardStatus = card.getAttribute('data-status');
+                const title = card.getAttribute('data-title').toLowerCase();
+                const description = card.getAttribute('data-description').toLowerCase();
+
+                let matchesStatus = (selectedStatus === 'all' || cardStatus === selectedStatus);
+                let matchesSearch = (searchTerm === '' || title.includes(searchTerm) || description.includes(searchTerm));
+
+                if (matchesStatus && matchesSearch) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                noResultsMessage.classList.add('hidden');
+            }
+        }
+
+        // Event listeners
+        statusFilter.addEventListener('change', filterCourses);
+        searchInput.addEventListener('input', filterCourses);
+
+        // Initial filter (shows all)
+        filterCourses();
+    </script>
+</body>
+
+</html>

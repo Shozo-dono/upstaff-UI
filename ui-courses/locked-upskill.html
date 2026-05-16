@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Upskilling Courses (Locked) | UpStaff Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .course-card {
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .course-card.locked {
+            opacity: 0.7;
+            filter: grayscale(0.2);
+        }
+
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1rem;
+            z-index: 10;
+            margin: 0;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 to-gray-100 antialiased">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
+        <!-- Header section -->
+        <div class="mb-8 fade-in">
+            <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-lock text-blue-500 text-xl"></i>
+                        </div>
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">Upskilling Courses
+                        </h1>
+                    </div>
+                    <p class="text-gray-600 text-base max-w-2xl">Specialized programs to advance your career. Complete
+                        all general courses to unlock.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Locked warning banner (amber style) -->
+        <div class="mb-8 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 fade-in">
+            <i class="fas fa-lock text-amber-500 text-xl mt-0.5"></i>
+            <div class="flex-1">
+                <p class="text-sm font-semibold text-amber-800">🔒 Upskilling Courses Locked</p>
+                <p class="text-sm text-amber-700">Complete and PASS all general courses with a passing score to unlock
+                    specialized upskilling courses.</p>
+                <div class="mt-3">
+                    <div class="flex justify-between text-xs text-amber-700 mb-1">
+                        <span>Progress to Unlock</span>
+                        <span>1/2 General Courses Passed</span>
+                    </div>
+                    <div class="w-full bg-amber-200 rounded-full h-2.5">
+                        <div class="bg-amber-500 h-2.5 rounded-full" style="width: 50%"></div>
+                    </div>
+                </div>
+                <p class="text-xs text-amber-600 mt-2"><i class="fas fa-info-circle mr-1"></i> You need to achieve a
+                    <strong>PASSING SCORE</strong> on all general courses (70% or higher) to unlock these advanced
+                    courses.
+                </p>
+            </div>
+        </div>
+
+        <!-- Filter and Search Bar -->
+        <div class="mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between fade-in">
+            <!-- Status Filter (only "All Courses" since all are locked) -->
+            <div
+                class="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm border border-gray-200">
+                <i class="fas fa-filter text-gray-500 text-sm"></i>
+                <select id="statusFilter"
+                    class="text-sm font-medium text-gray-700 bg-transparent focus:outline-none cursor-pointer">
+                    <option value="all">All Courses</option>
+                </select>
+            </div>
+            <!-- Search Input -->
+            <div class="relative w-full sm:w-80">
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input type="text" id="searchInput" placeholder="Search by title or description..."
+                    class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+            </div>
+        </div>
+
+        <!-- Course Grid Container -->
+        <div id="coursesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 fade-in">
+            <!-- All cards have data-title and data-description for search filtering -->
+
+            <!-- Course 1: Advanced Data Architecture (locked) -->
+            <div class="course-card locked bg-white rounded-2xl overflow-hidden shadow-md relative"
+                data-title="Advanced Data Architecture"
+                data-description="Deep dive into scalable database structures, data lakes, and cloud storage optimization for enterprise systems.">
+                <div class="lock-overlay">
+                    <div class="text-center text-white">
+                        <i class="fas fa-lock text-4xl mb-2"></i>
+                        <p class="text-sm font-semibold">Complete all general courses first</p>
+                        <p class="text-xs opacity-75">with a passing score to unlock</p>
+                    </div>
+                </div>
+                <div class="relative h-44 overflow-hidden">
+                    <img class="w-full h-full object-cover"
+                        src="https://placehold.co/600x300/2563eb/white?text=Data+Architecture" alt="Data Architecture">
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Data
+                            Engineering</span>
+                        <span
+                            class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">Advanced</span>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Advanced Data Architecture</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">Deep dive into scalable database structures,
+                        data lakes, and cloud storage optimization for enterprise systems.</p>
+                    <div class="mt-auto">
+                        <div
+                            class="w-full py-2.5 rounded-xl bg-gray-200 text-gray-500 text-sm font-semibold flex items-center justify-center gap-2 cursor-not-allowed">
+                            <i class="fas fa-lock"></i> Locked
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course 2: Cloud Maestro (locked) -->
+            <div class="course-card locked bg-white rounded-2xl overflow-hidden shadow-md relative"
+                data-title="Cloud Maestro"
+                data-description="Master AWS and Azure deployment pipelines, infrastructure as code, and global hybrid cloud strategies.">
+                <div class="lock-overlay">
+                    <div class="text-center text-white">
+                        <i class="fas fa-lock text-4xl mb-2"></i>
+                        <p class="text-sm font-semibold">Complete all general courses first</p>
+                        <p class="text-xs opacity-75">with a passing score to unlock</p>
+                    </div>
+                </div>
+                <div class="relative h-44 overflow-hidden">
+                    <img class="w-full h-full object-cover"
+                        src="https://placehold.co/600x300/7c3aed/white?text=Cloud+Maestro" alt="Cloud Maestro">
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span
+                            class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Cloud</span>
+                        <span
+                            class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">Expert</span>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Cloud Maestro</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">Master AWS and Azure deployment pipelines,
+                        infrastructure as code, and global hybrid cloud strategies.</p>
+                    <div class="mt-auto">
+                        <div
+                            class="w-full py-2.5 rounded-xl bg-gray-200 text-gray-500 text-sm font-semibold flex items-center justify-center gap-2 cursor-not-allowed">
+                            <i class="fas fa-lock"></i> Locked
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course 3: AI & Machine Learning Practitioner (locked) -->
+            <div class="course-card locked bg-white rounded-2xl overflow-hidden shadow-md relative"
+                data-title="AI & Machine Learning Practitioner"
+                data-description="Build and deploy ML models, work with TensorFlow, and implement real-world AI solutions.">
+                <div class="lock-overlay">
+                    <div class="text-center text-white">
+                        <i class="fas fa-lock text-4xl mb-2"></i>
+                        <p class="text-sm font-semibold">Complete all general courses first</p>
+                        <p class="text-xs opacity-75">with a passing score to unlock</p>
+                    </div>
+                </div>
+                <div class="relative h-44 overflow-hidden">
+                    <img class="w-full h-full object-cover" src="https://placehold.co/600x300/06b6d4/white?text=AI+ML"
+                        alt="AI/ML">
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Artificial
+                            Intelligence</span>
+                        <span
+                            class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">Advanced</span>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">AI & Machine Learning Practitioner</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">Build and deploy ML models, work with
+                        TensorFlow, and implement real-world AI solutions.</p>
+                    <div class="mt-auto">
+                        <div
+                            class="w-full py-2.5 rounded-xl bg-gray-200 text-gray-500 text-sm font-semibold flex items-center justify-center gap-2 cursor-not-allowed">
+                            <i class="fas fa-lock"></i> Locked
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course 4: Cybersecurity Leadership (locked) -->
+            <div class="course-card locked bg-white rounded-2xl overflow-hidden shadow-md relative"
+                data-title="Cybersecurity Leadership"
+                data-description="Incident response, risk management, compliance frameworks, and security architecture.">
+                <div class="lock-overlay">
+                    <div class="text-center text-white">
+                        <i class="fas fa-lock text-4xl mb-2"></i>
+                        <p class="text-sm font-semibold">Complete all general courses first</p>
+                        <p class="text-xs opacity-75">with a passing score to unlock</p>
+                    </div>
+                </div>
+                <div class="relative h-44 overflow-hidden">
+                    <img class="w-full h-full object-cover"
+                        src="https://placehold.co/600x300/d946ef/white?text=Cyber+Leadership" alt="Cybersecurity">
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span
+                            class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Security</span>
+                        <span
+                            class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">Expert</span>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Cybersecurity Leadership</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">Incident response, risk management, compliance
+                        frameworks, and security architecture.</p>
+                    <div class="mt-auto">
+                        <div
+                            class="w-full py-2.5 rounded-xl bg-gray-200 text-gray-500 text-sm font-semibold flex items-center justify-center gap-2 cursor-not-allowed">
+                            <i class="fas fa-lock"></i> Locked
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course 5: Full-Stack Cloud Development (locked) -->
+            <div class="course-card locked bg-white rounded-2xl overflow-hidden shadow-md relative"
+                data-title="Full-Stack Cloud Development"
+                data-description="Modern serverless applications, API gateways, frontend frameworks, and DevOps practices.">
+                <div class="lock-overlay">
+                    <div class="text-center text-white">
+                        <i class="fas fa-lock text-4xl mb-2"></i>
+                        <p class="text-sm font-semibold">Complete all general courses first</p>
+                        <p class="text-xs opacity-75">with a passing score to unlock</p>
+                    </div>
+                </div>
+                <div class="relative h-44 overflow-hidden">
+                    <img class="w-full h-full object-cover"
+                        src="https://placehold.co/600x300/10b981/white?text=Full+Stack+Cloud" alt="Full Stack Cloud">
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span
+                            class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Development</span>
+                        <span
+                            class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">Intermediate</span>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Full-Stack Cloud Development</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">Modern serverless applications, API gateways,
+                        frontend frameworks, and DevOps practices.</p>
+                    <div class="mt-auto">
+                        <div
+                            class="w-full py-2.5 rounded-xl bg-gray-200 text-gray-500 text-sm font-semibold flex items-center justify-center gap-2 cursor-not-allowed">
+                            <i class="fas fa-lock"></i> Locked
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course 6: Data Science & Analytics (locked) -->
+            <div class="course-card locked bg-white rounded-2xl overflow-hidden shadow-md relative"
+                data-title="Data Science & Analytics"
+                data-description="Statistical modeling, data visualization, and business intelligence with Python and R.">
+                <div class="lock-overlay">
+                    <div class="text-center text-white">
+                        <i class="fas fa-lock text-4xl mb-2"></i>
+                        <p class="text-sm font-semibold">Complete all general courses first</p>
+                        <p class="text-xs opacity-75">with a passing score to unlock</p>
+                    </div>
+                </div>
+                <div class="relative h-44 overflow-hidden">
+                    <img class="w-full h-full object-cover"
+                        src="https://placehold.co/600x300/0f172a/white?text=Data+Science" alt="Data Science">
+                </div>
+                <div class="p-5 flex-1 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <span
+                            class="text-xs px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Analytics</span>
+                        <span
+                            class="text-xs px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">Advanced</span>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800 mb-2">Data Science & Analytics</h3>
+                    <p class="text-sm text-gray-500 mb-4 leading-relaxed">Statistical modeling, data visualization, and
+                        business intelligence with Python and R.</p>
+                    <div class="mt-auto">
+                        <div
+                            class="w-full py-2.5 rounded-xl bg-gray-200 text-gray-500 text-sm font-semibold flex items-center justify-center gap-2 cursor-not-allowed">
+                            <i class="fas fa-lock"></i> Locked
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No results message (hidden by default) -->
+        <div id="noResultsMessage" class="hidden text-center py-12 bg-white/50 rounded-2xl mt-6 fade-in">
+            <i class="fas fa-search text-gray-400 text-5xl mb-3"></i>
+            <p class="text-gray-500 text-lg">No courses match your search.</p>
+            <p class="text-gray-400 text-sm mt-1">Try a different keyword.</p>
+        </div>
+
+        <!-- Additional note -->
+        <div class="mt-10 text-center text-sm text-gray-500 border-t border-gray-200 pt-6 fade-in">
+            <i class="fas fa-info-circle text-amber-400 mr-1"></i> Complete and pass all general courses with a score of
+            70% or higher to unlock these advanced courses.
+        </div>
+    </div>
+
+    <!-- Toast container (minimal) -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
+
+    <script>
+        // Simple toast helper (not used in locked version, but included for consistency)
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `px-5 py-3 rounded-xl text-white text-sm font-medium shadow-lg transform transition-all duration-300 flex items-center gap-2 ${type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-orange-600'}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2800);
+        }
+
+        // Filter and Search Logic (only search, since status is always "all")
+        const searchInput = document.getElementById('searchInput');
+        const coursesContainer = document.getElementById('coursesContainer');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        let allCards = Array.from(document.querySelectorAll('.course-card'));
+
+        function filterCourses() {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            let visibleCount = 0;
+
+            allCards.forEach(card => {
+                const title = card.getAttribute('data-title').toLowerCase();
+                const description = card.getAttribute('data-description').toLowerCase();
+
+                let matchesSearch = (searchTerm === '' || title.includes(searchTerm) || description.includes(searchTerm));
+
+                if (matchesSearch) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                noResultsMessage.classList.add('hidden');
+            }
+        }
+
+        // Event listeners
+        searchInput.addEventListener('input', filterCourses);
+
+        // Initial filter (shows all)
+        filterCourses();
+    </script>
+</body>
+
+</html>
