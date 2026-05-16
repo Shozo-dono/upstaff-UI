@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Course · Lumos Learning</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@100..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Work Sans', 'sans-serif'] },
+                    colors: { brand: { light: '#f0f4ff', DEFAULT: '#2563eb', dark: '#1e40af' } },
+                    borderRadius: { 'xl': '0.75rem', '2xl': '1rem', '3xl': '1.5rem' }
+                }
+            }
+        }
+    </script>
+    <style>
+        *:focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: 2px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 8px;
+        }
+
+        /* Drag-over state */
+        .dropzone-active {
+            border-color: #3b82f6 !important;
+            background-color: rgba(59, 130, 246, .06);
+        }
+
+        /* Range input styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 9999px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #2563eb;
+            border: 2px solid #fff;
+            box-shadow: 0 1px 4px rgba(37, 99, 235, .4);
+        }
+
+        input[type=range]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #2563eb;
+            border: 2px solid #fff;
+            box-shadow: 0 1px 4px rgba(37, 99, 235, .4);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 font-sans text-slate-800 antialiased">
+
+    <!-- ── HEADER ────────────────────────────────────────────── -->
+    <header class="border-b border-slate-200 bg-white/90 backdrop-blur-sm sticky top-0 z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+
+            <div class="flex items-center gap-4 sm:gap-8">
+                <button id="headerBackBtn"
+                    class="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition"
+                    aria-label="Go back">
+                    <span class="material-symbols-outlined text-sm">arrow_back</span>
+                </button>
+
+                <!-- Stepper -->
+                <div class="flex items-center gap-2 sm:gap-6 text-sm">
+                    <!-- Step 1 — active -->
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-semibold shadow-sm">
+                            1</div>
+                        <div class="hidden sm:block">
+                            <p class="font-medium text-blue-700">Step 1</p>
+                            <p class="text-xs text-slate-500">Basic info</p>
+                        </div>
+                    </div>
+                    <div class="hidden sm:block w-8 h-px bg-slate-300"></div>
+                    <!-- Step 2 — inactive -->
+                    <div class="flex items-center gap-2 text-slate-400 cursor-not-allowed">
+                        <div
+                            class="w-7 h-7 rounded-full border border-slate-300 bg-white flex items-center justify-center text-xs font-medium">
+                            2</div>
+                        <div class="hidden sm:block">
+                            <p class="font-medium">Step 2</p>
+                            <p class="text-xs">Curriculum</p>
+                        </div>
+                    </div>
+                    <div class="hidden sm:block w-8 h-px bg-slate-300"></div>
+                    <!-- Step 3 — inactive -->
+                    <div class="flex items-center gap-2 text-slate-400 cursor-not-allowed">
+                        <div
+                            class="w-7 h-7 rounded-full border border-slate-300 bg-white flex items-center justify-center text-xs font-medium">
+                            3</div>
+                        <div class="hidden sm:block">
+                            <p class="font-medium">Step 3</p>
+                            <p class="text-xs">Review</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button id="saveDraftHeader"
+                    class="hidden sm:inline-flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 shadow-sm transition">
+                    <span class="material-symbols-outlined text-lg">save</span> Save draft
+                </button>
+                <div
+                    class="w-9 h-9 rounded-xl border-2 border-slate-100 overflow-hidden bg-slate-200 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-slate-500">person</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── MAIN ──────────────────────────────────────────────── -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 pb-32 space-y-8">
+
+        <!-- CARD: Course Basics -->
+        <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6 sm:p-8">
+                <div class="flex items-start gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <span class="material-symbols-outlined">menu_book</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-slate-800">Course basics</h2>
+                        <p class="text-sm text-slate-500 mt-0.5">The foundation of your course — name, category, and
+                            description</p>
+                    </div>
+                </div>
+
+                <div class="space-y-5">
+
+                    <!-- Title -->
+                    <div>
+                        <label for="courseTitle" class="block text-sm font-medium text-slate-700 mb-1.5">
+                            Course title <span class="text-slate-400">*</span>
+                        </label>
+                        <input id="courseTitle" type="text" maxlength="80"
+                            placeholder="e.g. Advanced UI/UX Design Masterclass"
+                            class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition bg-slate-50/50">
+                        <div class="flex items-center justify-between mt-2">
+                            <p class="text-xs text-slate-400 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">lightbulb</span> Keep it short and
+                                catchy (max 60
+                                characters)
+                            </p>
+                            <span id="titleCounter" class="text-xs text-slate-400">0/60</span>
+                        </div>
+                    </div>
+
+                    <!-- Course type -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Course type</label>
+                        <div class="flex flex-wrap gap-2 p-1 bg-slate-100 rounded-xl w-fit">
+                            <button data-type="general"
+                                class="type-btn px-5 py-2 rounded-lg bg-white text-slate-800 text-sm font-medium shadow-sm border border-slate-200">General
+                                Skills</button>
+                            <button data-type="upskilling"
+                                class="type-btn px-5 py-2 rounded-lg text-slate-600 text-sm font-medium hover:bg-white/60 transition">Upskilling</button>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">schedule</span> Foundational or advanced?
+                            This helps us
+                            recommend your course.
+                        </p>
+                    </div>
+
+                    <!-- Category + Difficulty -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="courseCategory"
+                                class="block text-sm font-medium text-slate-700 mb-1.5">Category</label>
+                            <div class="relative">
+                                <select id="courseCategory"
+                                    class="w-full appearance-none px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50/50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-slate-700">
+                                    <option>Design</option>
+                                    <option>Development</option>
+                                    <option>Marketing</option>
+                                    <option>Business</option>
+                                    <option>Cybersecurity</option>
+                                    <option>Data Science</option>
+                                </select>
+                                <span
+                                    class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-base">expand_more</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="courseDifficulty"
+                                class="block text-sm font-medium text-slate-700 mb-1.5">Difficulty
+                                level</label>
+                            <div class="relative">
+                                <select id="courseDifficulty"
+                                    class="w-full appearance-none px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50/50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-slate-700">
+                                    <option>Beginner</option>
+                                    <option>Intermediate</option>
+                                    <option>Advanced</option>
+                                    <option>All levels</option>
+                                </select>
+                                <span
+                                    class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-base">expand_more</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label for="courseDescription" class="block text-sm font-medium text-slate-700 mb-1.5">Course
+                            description</label>
+                        <textarea id="courseDescription"
+                            placeholder="Describe what students will learn, prerequisites, and any key takeaways..."
+                            class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition bg-slate-50/50 h-32 resize-y"></textarea>
+                        <div class="flex items-center justify-between mt-2">
+                            <p class="text-xs text-slate-400 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">info</span> A clear description helps
+                                students choose
+                                the right course.
+                            </p>
+                            <span id="descCounter" class="text-xs text-slate-400">0 chars</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- CARD: Course Media -->
+        <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6 sm:p-8">
+                <div class="flex items-start gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                        <span class="material-symbols-outlined">movie</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-slate-800">Course media</h2>
+                        <p class="text-sm text-slate-500 mt-0.5">Upload a thumbnail that represents your course</p>
+                    </div>
+                </div>
+
+                <!-- Dropzone -->
+                <div id="thumbnailDropzone"
+                    class="border-2 border-dashed border-slate-200 rounded-2xl p-8 hover:border-blue-400 transition cursor-pointer group">
+                    <input type="file" id="thumbnailInput" accept="image/jpeg,image/png,image/gif,image/webp"
+                        class="hidden">
+
+                    <!-- Placeholder state -->
+                    <div id="uploadPlaceholder" class="flex flex-col items-center text-center">
+                        <div
+                            class="w-14 h-14 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center mb-3 group-hover:bg-blue-100 transition">
+                            <span class="material-symbols-outlined text-3xl">cloud_upload</span>
+                        </div>
+                        <p class="text-slate-700 font-medium">Drag & drop an image, or <span
+                                class="text-blue-600">browse</span></p>
+                        <p class="text-sm text-slate-400 mt-1">Supports JPG, PNG, GIF • 750×422 px recommended</p>
+                        <div class="mt-4 inline-flex items-center gap-1 text-xs text-slate-400">
+                            <span class="material-symbols-outlined text-xs">visibility</span> Preview will appear after
+                            upload
+                        </div>
+                    </div>
+
+                    <!-- Preview state (hidden until upload) -->
+                    <div id="previewContainer" class="hidden">
+                        <div class="relative">
+                            <img id="thumbnailPreview" src="" alt="Thumbnail preview"
+                                class="w-full rounded-xl object-cover max-h-60">
+                            <div
+                                class="absolute inset-0 bg-black/0 hover:bg-black/10 transition rounded-xl flex items-center justify-center">
+                                <span
+                                    class="opacity-0 hover:opacity-100 text-white text-sm font-medium bg-black/50 px-3 py-1 rounded-full transition">Click
+                                    to change</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-green-500 text-base">check_circle</span>
+                                <span id="thumbnailFileName" class="text-xs text-slate-500 truncate max-w-xs"></span>
+                            </div>
+                            <button id="removeThumbnailBtn"
+                                class="text-xs text-red-500 hover:text-red-700 font-medium flex items-center gap-1 transition">
+                                <span class="material-symbols-outlined text-sm">close</span> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex items-center gap-3 text-xs text-slate-400 bg-slate-50 p-3 rounded-xl">
+                    <span class="material-symbols-outlined text-slate-300">photo_camera</span>
+                    <span>High-quality thumbnails get 30% more clicks. Use bright, clear images.</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ── STICKY FOOTER ─────────────────────────────────────── -->
+    <footer class="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-sm border-t border-slate-200 py-3">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+            <button id="footerBackBtn"
+                class="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition">
+                <span class="material-symbols-outlined text-sm">arrow_back</span> Back
+            </button>
+            <div class="flex items-center gap-4">
+                <p class="text-xs text-slate-400 hidden sm:block">Step 1 of 3 • Basic info</p>
+                <button id="saveDraftFooter"
+                    class="hidden sm:inline-flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 shadow-sm transition">
+                    <span class="material-symbols-outlined text-base">save</span> Save draft
+                </button>
+                <button id="saveContinue"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl shadow-sm shadow-blue-200 transition">
+                    Save & continue <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ── TOAST CONTAINER ───────────────────────────────────── -->
+    <div id="toastContainer"
+        class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none">
+    </div>
+
+    <script>
+        /* ─── Utility ──────────────────────────────────────────── */
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            const bg = type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-amber-500' : 'bg-slate-800';
+            const icon = type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'check_circle';
+            t.className = `pointer-events-auto flex items-center gap-2 px-5 py-3 ${bg} text-white text-sm font-medium rounded-xl shadow-lg opacity-0 translate-y-2 transition-all duration-300`;
+            t.innerHTML = `<span class="material-symbols-outlined text-base">${icon}</span>${msg}`;
+            container.appendChild(t);
+            requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateY(0)'; });
+            setTimeout(() => {
+                t.style.opacity = '0'; t.style.transform = 'translateY(8px)';
+                setTimeout(() => t.remove(), 300);
+            }, 3000);
+        }
+
+        /* ─── Persistent state ─────────────────────────────────── */
+        function saveDraft() {
+            const title = document.getElementById('courseTitle').value.trim();
+            const data = {
+                title,
+                type: document.querySelector('.type-btn.active-type')?.dataset.type || 'general',
+                category: document.getElementById('courseCategory').value,
+                difficulty: document.getElementById('courseDifficulty').value,
+                description: document.getElementById('courseDescription').value.trim(),
+                thumbnailName: document.getElementById('thumbnailFileName').textContent || ''
+            };
+            localStorage.setItem('courseData', JSON.stringify(data));
+        }
+
+        function loadDraft() {
+            try {
+                const data = JSON.parse(localStorage.getItem('courseData') || '{}');
+                if (data.title) document.getElementById('courseTitle').value = data.title;
+                if (data.type) {
+                    document.querySelectorAll('.type-btn').forEach(b => {
+                        b.classList.remove('bg-white', 'text-slate-800', 'shadow-sm', 'border', 'border-slate-200', 'active-type');
+                        b.classList.add('text-slate-600');
+                    });
+                    const activeBtn = document.querySelector(`[data-type="${data.type}"]`);
+                    if (activeBtn) activateTypeBtn(activeBtn);
+                }
+                if (data.category) document.getElementById('courseCategory').value = data.category;
+                if (data.difficulty) document.getElementById('courseDifficulty').value = data.difficulty;
+                if (data.description) document.getElementById('courseDescription').value = data.description;
+                updateTitleCounter();
+                updateDescCounter();
+            } catch (e) { }
+        }
+
+        /* ─── Course type toggle ───────────────────────────────── */
+        function activateTypeBtn(btn) {
+            document.querySelectorAll('.type-btn').forEach(b => {
+                b.classList.remove('bg-white', 'text-slate-800', 'shadow-sm', 'border', 'border-slate-200', 'active-type');
+                b.classList.add('text-slate-600');
+            });
+            btn.classList.add('bg-white', 'text-slate-800', 'shadow-sm', 'border', 'border-slate-200', 'active-type');
+            btn.classList.remove('text-slate-600');
+        }
+
+        document.querySelectorAll('.type-btn').forEach(btn => {
+            btn.addEventListener('click', () => activateTypeBtn(btn));
+        });
+
+        /* ─── Character counters ───────────────────────────────── */
+        function updateTitleCounter() {
+            const len = document.getElementById('courseTitle').value.length;
+            const el = document.getElementById('titleCounter');
+            el.textContent = `${len}/60`;
+            el.className = `text-xs ${len > 60 ? 'text-red-500 font-medium' : len > 45 ? 'text-amber-500' : 'text-slate-400'}`;
+        }
+
+        function updateDescCounter() {
+            const len = document.getElementById('courseDescription').value.length;
+            const el = document.getElementById('descCounter');
+            el.textContent = `${len} char${len !== 1 ? 's' : ''}`;
+            el.className = `text-xs ${len > 0 && len < 50 ? 'text-amber-500' : 'text-slate-400'}`;
+        }
+
+        document.getElementById('courseTitle').addEventListener('input', updateTitleCounter);
+        document.getElementById('courseDescription').addEventListener('input', updateDescCounter);
+
+        /* ─── Thumbnail upload ─────────────────────────────────── */
+        const dropzone = document.getElementById('thumbnailDropzone');
+        const fileInput = document.getElementById('thumbnailInput');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const previewContainer = document.getElementById('previewContainer');
+        const thumbnailPreview = document.getElementById('thumbnailPreview');
+        const thumbnailFileName = document.getElementById('thumbnailFileName');
+        let currentThumbnail = null;
+
+        dropzone.addEventListener('click', (e) => {
+            if (!e.target.closest('#removeThumbnailBtn')) fileInput.click();
+        });
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dropzone-active');
+        });
+
+        dropzone.addEventListener('dragleave', (e) => {
+            if (!dropzone.contains(e.relatedTarget)) dropzone.classList.remove('dropzone-active');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dropzone-active');
+            const file = e.dataTransfer.files[0];
+            if (file) handleThumbnail(file);
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files[0]) handleThumbnail(fileInput.files[0]);
+        });
+
+        document.getElementById('removeThumbnailBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeThumbnail();
+        });
+
+        function handleThumbnail(file) {
+            if (!file.type.startsWith('image/')) {
+                showToast('Please upload a valid image file (JPG, PNG, GIF)', 'error');
+                return;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                showToast('Image must be smaller than 10MB', 'error');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                currentThumbnail = ev.target.result;
+                thumbnailPreview.src = currentThumbnail;
+                thumbnailFileName.textContent = `${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
+                uploadPlaceholder.classList.add('hidden');
+                previewContainer.classList.remove('hidden');
+                dropzone.classList.remove('p-8');
+                dropzone.classList.add('p-5');
+                showToast('Thumbnail uploaded successfully');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeThumbnail() {
+            currentThumbnail = null;
+            thumbnailPreview.src = '';
+            fileInput.value = '';
+            uploadPlaceholder.classList.remove('hidden');
+            previewContainer.classList.add('hidden');
+            dropzone.classList.add('p-8');
+            dropzone.classList.remove('p-5');
+        }
+
+        /* ─── Validation ───────────────────────────────────────── */
+        function validateForm() {
+            const title = document.getElementById('courseTitle').value.trim();
+            if (!title) {
+                showToast('Please enter a course title', 'error');
+                document.getElementById('courseTitle').focus();
+                document.getElementById('courseTitle').classList.add('border-red-400', 'ring-2', 'ring-red-200');
+                setTimeout(() => document.getElementById('courseTitle').classList.remove('border-red-400', 'ring-2', 'ring-red-200'), 2000);
+                return false;
+            }
+            if (title.length > 60) {
+                showToast('Course title must be 60 characters or fewer', 'warning');
+                document.getElementById('courseTitle').focus();
+                return false;
+            }
+            return true;
+        }
+
+        /* ─── Navigation ───────────────────────────────────────── */
+        document.getElementById('saveContinue').addEventListener('click', () => {
+            if (!validateForm()) return;
+            saveDraft();
+            showToast('Saved! Moving to Step 2…');
+            setTimeout(() => window.location.href = 'step2.html', 800);
+        });
+
+        [document.getElementById('saveDraftHeader'), document.getElementById('saveDraftFooter')].forEach(btn => {
+            btn?.addEventListener('click', () => { saveDraft(); showToast('Draft saved!'); });
+        });
+
+        document.getElementById('headerBackBtn').addEventListener('click', () => {
+            saveDraft();
+            history.back();
+        });
+
+        document.getElementById('footerBackBtn').addEventListener('click', () => {
+            saveDraft();
+            history.back();
+        });
+
+        /* ─── Init ─────────────────────────────────────────────── */
+        loadDraft();
+        // Activate first type button by default if none active
+        if (!document.querySelector('.active-type')) {
+            activateTypeBtn(document.querySelector('[data-type="general"]'));
+        }
+    </script>
+</body>
+
+</html>

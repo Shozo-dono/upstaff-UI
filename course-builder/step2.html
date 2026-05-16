@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Course Builder · Curriculum</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@100..700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Work Sans', 'sans-serif'] },
+                    colors: { brand: { light: '#f0f4ff', DEFAULT: '#2563eb', dark: '#1e40af' } },
+                    borderRadius: { 'xl': '0.75rem', '2xl': '1rem', '3xl': '1.5rem' }
+                }
+            }
+        }
+    </script>
+    <style>
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 8px;
+        }
+
+        *:focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: 2px;
+        }
+
+        .dropzone-active {
+            border-color: #3b82f6 !important;
+            background-color: rgba(59, 130, 246, .06) !important;
+        }
+
+        /* range slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 9999px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2563eb;
+            border: 3px solid #fff;
+            box-shadow: 0 1px 4px rgba(37, 99, 235, .4);
+            cursor: pointer;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2563eb;
+            border: 3px solid #fff;
+            box-shadow: 0 1px 4px rgba(37, 99, 235, .4);
+            cursor: pointer;
+        }
+
+        /* option item correct highlight */
+        .option-correct input[type=text] {
+            border-color: #93c5fd;
+            background-color: rgba(239, 246, 255, .5);
+            font-weight: 500;
+        }
+
+        /* chapter inline rename */
+        .chapter-rename-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            width: 100%;
+        }
+
+        /* module item hover reveals delete btn */
+        .module-item .del-btn {
+            opacity: 0;
+            transition: opacity .15s;
+        }
+
+        .module-item:hover .del-btn {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 font-sans text-slate-800 flex h-screen overflow-hidden">
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-white">
+
+        <!-- ── HEADER ─────────────────────────────────────────────── -->
+        <header class="border-b border-slate-200 bg-white/90 backdrop-blur-sm sticky top-0 z-20 shrink-0">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-4 sm:gap-8">
+                    <button id="headerBackBtn"
+                        class="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 transition"
+                        aria-label="Go back">
+                        <span class="material-symbols-outlined text-sm">arrow_back</span>
+                    </button>
+
+                    <div class="flex items-center gap-2 sm:gap-6 text-sm">
+                        <!-- Step 1 — done -->
+                        <div class="flex items-center gap-2 cursor-pointer" id="goStep1">
+                            <div
+                                class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-semibold shadow-sm">
+                                <span class="material-symbols-outlined text-xs">check</span>
+                            </div>
+                            <div class="hidden sm:block">
+                                <p class="font-medium text-blue-700">Step 1</p>
+                                <p class="text-xs text-slate-500">Basic info</p>
+                            </div>
+                        </div>
+                        <div class="hidden sm:block w-8 h-px bg-blue-300"></div>
+
+                        <!-- Step 2 — active -->
+                        <div class="flex items-center gap-2">
+                            <div
+                                class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-semibold shadow-sm">
+                                2</div>
+                            <div class="hidden sm:block">
+                                <p class="font-medium text-blue-700">Step 2</p>
+                                <p class="text-xs text-slate-500">Curriculum</p>
+                            </div>
+                        </div>
+                        <div class="hidden sm:block w-8 h-px bg-slate-300"></div>
+
+                        <!-- Step 3 — inactive -->
+                        <div class="flex items-center gap-2 text-slate-400">
+                            <div
+                                class="w-7 h-7 rounded-full border border-slate-300 bg-white flex items-center justify-center text-xs font-medium">
+                                3</div>
+                            <div class="hidden sm:block">
+                                <p class="font-medium">Step 3</p>
+                                <p class="text-xs">Review</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button id="saveDraftHeader"
+                        class="hidden sm:inline-flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 shadow-sm transition">
+                        <span class="material-symbols-outlined text-lg">save</span> Save draft
+                    </button>
+                    <div
+                        class="w-9 h-9 rounded-xl border-2 border-slate-100 bg-slate-200 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-slate-500 text-base">person</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ── SIDEBAR + CONTENT ────────────────────────────────── -->
+        <div class="flex-1 flex overflow-hidden">
+
+            <!-- SIDEBAR -->
+            <aside class="w-[320px] border-r border-slate-200 bg-white flex flex-col h-full shrink-0">
+                <div class="flex items-center justify-between p-5 border-b border-slate-100">
+                    <h3 class="font-semibold text-slate-800">Curriculum</h3>
+                    <button id="addChapterBtn"
+                        class="text-blue-600 text-xs font-medium uppercase tracking-wider hover:underline flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">add</span> New Chapter
+                    </button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-5 space-y-6 scrollbar-thin" id="chaptersContainer">
+                    <!-- Dynamically rendered by JS -->
+                </div>
+
+                <!-- New Module (bottom) -->
+                <div class="p-5 border-t border-slate-100">
+                    <button id="addModuleBottomBtn"
+                        class="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-200 rounded-xl text-slate-400 hover:border-blue-400 hover:text-blue-500 transition-all text-xs font-medium uppercase tracking-wider group">
+                        <span class="material-symbols-outlined text-lg group-hover:scale-110 transition">add</span>
+                        New Module
+                    </button>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <div class="flex-1 flex flex-col h-full bg-slate-50/50 overflow-hidden">
+                <div class="flex-1 overflow-y-auto p-6 lg:p-8 scrollbar-thin">
+                    <div id="rightPanel" class="max-w-4xl mx-auto space-y-8 pb-24">
+
+                        <!-- ── EMPTY STATE ────────────────────────── -->
+                        <div id="section-empty" class="flex flex-col items-center justify-center py-32 text-center">
+                            <div class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mb-5">
+                                <span class="material-symbols-outlined text-4xl text-blue-300">touch_app</span>
+                            </div>
+                            <p class="text-slate-600 font-semibold text-lg">Select a module to edit</p>
+                            <p class="text-slate-400 text-sm mt-2 max-w-xs">Choose a module from the curriculum sidebar,
+                                or add a new
+                                chapter to get started.</p>
+                        </div>
+
+                        <!-- ── MODULE HEADER (shown when any module selected) ── -->
+                        <div id="moduleHeader" class="hidden">
+                            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Currently
+                                Editing</p>
+                            <div
+                                class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-4">
+                                <div class="flex items-center gap-4 min-w-0">
+                                    <div id="moduleTypeIcon"
+                                        class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-blue-50 text-blue-600">
+                                        <span class="material-symbols-outlined">video_library</span>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <h2 id="moduleTitleDisplay" class="text-xl font-bold text-slate-800 truncate">
+                                        </h2>
+                                        <p id="moduleTypeBadge"
+                                            class="text-xs text-slate-400 mt-0.5 uppercase tracking-wider font-medium">
+                                        </p>
+                                    </div>
+                                </div>
+                                <button id="renameModuleBtn"
+                                    class="shrink-0 text-blue-600 text-xs font-medium uppercase tracking-wider hover:underline flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">edit</span> Rename
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ── VIDEO SECTION ─────────────────────── -->
+                        <section id="section-video"
+                            class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                            <div class="p-6 border-b border-slate-100 flex items-center gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                                    <span class="material-symbols-outlined">movie</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-slate-800">Video Tutorial</h3>
+                                    <p class="text-sm text-slate-500">Upload your lesson video or embed a link.</p>
+                                </div>
+                            </div>
+                            <div class="p-6 space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Dropzone -->
+                                    <div id="videoDropzone"
+                                        class="border-2 border-dashed border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:border-blue-400 hover:bg-blue-50/20 transition cursor-pointer group">
+                                        <input type="file" id="videoInput"
+                                            accept="video/mp4,video/mov,video/webm,video/quicktime" class="hidden">
+                                        <div id="videoUploadPlaceholder">
+                                            <div
+                                                class="w-14 h-14 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-100 transition">
+                                                <span class="material-symbols-outlined text-3xl">cloud_upload</span>
+                                            </div>
+                                            <p class="text-sm font-medium text-slate-700">Click or drag & drop to upload
+                                            </p>
+                                            <p class="text-xs text-slate-400 mt-1">MP4, MOV, WEBM (max 2 GB)</p>
+                                        </div>
+                                        <div id="videoUploadReady" class="hidden text-center">
+                                            <span
+                                                class="material-symbols-outlined text-3xl text-green-500 mb-2">check_circle</span>
+                                            <p id="videoFileName" class="text-sm font-medium text-slate-700"></p>
+                                            <button id="removeVideoBtn"
+                                                class="text-xs text-red-500 mt-1 hover:underline">Remove</button>
+                                        </div>
+                                    </div>
+                                    <!-- Preview placeholder -->
+                                    <div class="relative aspect-video bg-slate-100 rounded-2xl overflow-hidden flex items-center justify-center"
+                                        id="videoPreviewArea">
+                                        <span
+                                            class="material-symbols-outlined text-5xl text-slate-300">smart_display</span>
+                                        <p class="absolute bottom-4 text-xs text-slate-400">Video preview will appear
+                                            here</p>
+                                    </div>
+                                </div>
+
+                                <!-- External link -->
+                                <div class="flex flex-wrap gap-3">
+                                    <button id="externalLinkBtn"
+                                        class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 transition shadow-sm">
+                                        <span class="material-symbols-outlined text-lg">link</span> External Link
+                                    </button>
+                                    <button id="transcriptBtn"
+                                        class="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 transition shadow-sm">
+                                        <span class="material-symbols-outlined text-lg">description</span> Transcript
+                                    </button>
+                                </div>
+
+                                <!-- External link input (hidden) -->
+                                <div id="externalLinkInput" class="hidden">
+                                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Video URL (YouTube,
+                                        Vimeo,
+                                        etc.)</label>
+                                    <div class="flex gap-2">
+                                        <input type="url" id="externalLinkValue"
+                                            placeholder="https://youtube.com/watch?v=..."
+                                            class="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm bg-slate-50/50">
+                                        <button id="saveExternalLink"
+                                            class="px-4 py-2.5 bg-blue-600 text-white text-sm rounded-xl hover:bg-blue-700 font-medium transition">Save</button>
+                                    </div>
+                                </div>
+
+                                <!-- Transcript textarea (hidden) -->
+                                <div id="transcriptArea" class="hidden">
+                                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Transcript</label>
+                                    <textarea rows="5" placeholder="Paste or type the video transcript here..."
+                                        class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm bg-slate-50/50 resize-y"></textarea>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- ── ARTICLE SECTION ───────────────────── -->
+                        <section id="section-article"
+                            class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                            <div class="p-6 border-b border-slate-100 flex items-center gap-4">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-green-50 text-green-600 flex items-center justify-center">
+                                    <span class="material-symbols-outlined">article</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-slate-800">Article Content</h3>
+                                    <p class="text-sm text-slate-500">Write or paste the lesson content here.</p>
+                                </div>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Content</label>
+                                    <textarea id="articleContent" rows="10"
+                                        placeholder="Write your lesson content here. You can use markdown formatting..."
+                                        class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm bg-slate-50/50 resize-y"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Estimated Read Time
+                                        (minutes)</label>
+                                    <input type="number" min="1" max="60" value="5"
+                                        class="w-32 px-4 py-2.5 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm bg-slate-50/50">
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- ── QUIZ: ASSESSMENT CONFIG ────────────── -->
+                        <section id="section-quiz-config"
+                            class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                                        <span class="material-symbols-outlined">assignment</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-slate-800">Quiz Settings</h3>
+                                        <p class="text-sm text-slate-500">Configure quiz behavior and scoring.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-6 space-y-6">
+                                <!-- Title & Description -->
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Quiz
+                                            Title</label>
+                                        <input id="quizTitle" type="text" value="Knowledge Check"
+                                            class="w-full rounded-xl border-slate-200 bg-slate-50/50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 px-4 py-3 text-sm outline-none">
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
+                                        <textarea id="quizDescription" rows="2"
+                                            class="w-full rounded-xl border-slate-200 bg-slate-50/50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 px-4 py-3 text-sm resize-none outline-none"
+                                            placeholder="Describe the quiz objective..."></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- General Behavior -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="border border-slate-100 rounded-xl p-5">
+                                        <p class="font-semibold text-slate-800 mb-1">Attempts Allowed</p>
+                                        <p class="text-xs text-slate-400 mb-3">How many times can a student retake?</p>
+                                        <div class="relative">
+                                            <select id="attemptsAllowed"
+                                                class="w-full appearance-none rounded-lg border-slate-200 bg-slate-50/50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 py-2.5 px-3 text-sm outline-none">
+                                                <option>Unlimited</option>
+                                                <option>1 Attempt</option>
+                                                <option>2 Attempts</option>
+                                                <option>3 Attempts</option>
+                                            </select>
+                                            <span
+                                                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-base">expand_more</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="border border-slate-100 rounded-xl p-5">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <p class="font-semibold text-slate-800">Randomize Questions</p>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input id="randomizeToggle" type="checkbox" class="sr-only peer"
+                                                    checked>
+                                                <div
+                                                    class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full">
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <p class="text-xs text-slate-400">Shuffle question order for each student.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Passing Threshold -->
+                                <div class="bg-slate-50 rounded-xl p-5 border border-slate-100">
+                                    <div class="flex justify-between items-end mb-4">
+                                        <div>
+                                            <p class="font-semibold text-slate-800">Passing Threshold</p>
+                                            <p class="text-xs text-slate-400">Minimum score required to pass</p>
+                                        </div>
+                                        <span id="thresholdValue" class="text-blue-600 font-bold text-2xl">85%</span>
+                                    </div>
+                                    <div class="relative">
+                                        <div
+                                            class="h-2 w-full bg-slate-200 rounded-full overflow-hidden absolute top-1/2 -translate-y-1/2 pointer-events-none">
+                                            <div id="thresholdBar"
+                                                class="h-full bg-blue-600 rounded-full transition-all"
+                                                style="width:85%">
+                                            </div>
+                                        </div>
+                                        <input type="range" id="thresholdSlider" min="0" max="100" value="85"
+                                            class="w-full relative" style="background: transparent;">
+                                    </div>
+                                </div>
+
+                                <!-- Duration -->
+                                <div class="bg-slate-50 rounded-xl p-5 border border-slate-100">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <p class="font-semibold text-slate-800">Duration</p>
+                                            <p class="text-xs text-slate-400">Time limit to complete the quiz (0 =
+                                                unlimited)</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div
+                                            class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-2">
+                                            <input type="number" id="durationMins" min="0" max="999" value="45"
+                                                class="text-lg font-bold w-16 outline-none bg-transparent">
+                                            <span class="text-xs font-medium text-slate-400 uppercase">MINS</span>
+                                        </div>
+                                        <div
+                                            class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 flex items-center gap-2">
+                                            <input type="number" id="durationSecs" min="0" max="59" value="0"
+                                                class="text-lg font-bold w-16 outline-none bg-transparent">
+                                            <span class="text-xs font-medium text-slate-400 uppercase">SECS</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Advanced -->
+                                <details class="group">
+                                    <summary
+                                        class="flex items-center justify-between py-3 px-4 bg-slate-900 text-white rounded-xl cursor-pointer hover:bg-black transition list-none">
+                                        <div class="flex items-center gap-3">
+                                            <span class="material-symbols-outlined text-blue-400">mystery</span>
+                                            <span class="text-sm font-medium">Advanced Logic & Proctoring</span>
+                                        </div>
+                                        <span
+                                            class="material-symbols-outlined group-open:rotate-180 transition">expand_more</span>
+                                    </summary>
+                                    <div class="pt-4 space-y-3">
+                                        <div
+                                            class="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-xl">
+                                            <div class="flex items-center gap-3">
+                                                <span class="material-symbols-outlined text-slate-400">lock</span>
+                                                <div>
+                                                    <p class="text-sm font-medium text-slate-800">Browser Lockdown</p>
+                                                    <p class="text-xs text-slate-400">Prevent tab switching during quiz.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" class="sr-only peer">
+                                                <div
+                                                    class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full">
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div
+                                            class="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-xl">
+                                            <div class="flex items-center gap-3">
+                                                <span
+                                                    class="material-symbols-outlined text-slate-400">visibility_off</span>
+                                                <div>
+                                                    <p class="text-sm font-medium text-slate-800">Hide Correct Answers
+                                                    </p>
+                                                    <p class="text-xs text-slate-400">Only show final grade, not
+                                                        per-question feedback.</p>
+                                                </div>
+                                            </div>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" class="sr-only peer" checked>
+                                                <div
+                                                    class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full">
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </details>
+                            </div>
+                        </section>
+
+                        <!-- ── QUIZ: QUESTIONS ────────────────────── -->
+                        <section id="section-questions" class="hidden space-y-5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-semibold text-slate-800">Assessment Questions</h3>
+                                <span id="questionCountBadge"
+                                    class="text-xs font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">0
+                                    questions</span>
+                            </div>
+
+                            <!-- Add question buttons -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <button id="addMCBtn"
+                                    class="group flex flex-col items-center p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-blue-400 hover:bg-blue-50/20 transition">
+                                    <span
+                                        class="material-symbols-outlined text-3xl mb-2 text-slate-300 group-hover:text-blue-500">checklist</span>
+                                    <span
+                                        class="text-xs font-medium uppercase tracking-wider text-slate-500 group-hover:text-blue-600">Multiple
+                                        Choice</span>
+                                </button>
+                                <button id="addTFBtn"
+                                    class="group flex flex-col items-center p-8 bg-white border-2 border-dashed border-slate-200 rounded-2xl hover:border-blue-400 hover:bg-blue-50/20 transition">
+                                    <span
+                                        class="material-symbols-outlined text-3xl mb-2 text-slate-300 group-hover:text-blue-500">rule</span>
+                                    <span
+                                        class="text-xs font-medium uppercase tracking-wider text-slate-500 group-hover:text-blue-600">True
+                                        /
+                                        False</span>
+                                </button>
+                            </div>
+
+                            <!-- Questions list -->
+                            <div id="questionsList" class="space-y-4"></div>
+                        </section>
+
+                    </div><!-- /rightPanel -->
+                </div>
+
+                <!-- FOOTER -->
+                <footer class="bg-white/80 backdrop-blur-sm border-t border-slate-200 py-3 shrink-0">
+                    <div class="max-w-5xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+                        <button id="footerBackBtn"
+                            class="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition">
+                            <span class="material-symbols-outlined text-sm">arrow_back</span> Back
+                        </button>
+                        <div class="flex items-center gap-4">
+                            <p class="text-xs text-slate-400 hidden sm:block">Step 2 of 3 • Curriculum</p>
+                            <button id="saveDraftFooter"
+                                class="hidden sm:inline-flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 shadow-sm transition">
+                                <span class="material-symbols-outlined text-base">save</span> Save draft
+                            </button>
+                            <button id="saveContinue"
+                                class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl shadow-sm shadow-blue-200 transition">
+                                Save & Continue <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ── TOAST ─────────────────────────────────────────────── -->
+    <div id="toastContainer"
+        class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none">
+    </div>
+
+    <!-- ── RENAME MODAL ───────────────────────────────────────── -->
+    <div id="renameModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-sm p-6">
+            <h3 id="renameModalTitle" class="font-semibold text-slate-800 mb-4">Rename</h3>
+            <input id="renameInput" type="text"
+                class="w-full px-4 py-2.5 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm mb-4">
+            <div class="flex gap-3 justify-end">
+                <button id="renameCancelBtn"
+                    class="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50">Cancel</button>
+                <button id="renameConfirmBtn"
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700">Rename</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ADD MODULE TYPE MODAL ─────────────────────────────── -->
+    <div id="addModuleModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-xs p-6">
+            <h3 class="font-semibold text-slate-800 mb-1">Add Module</h3>
+            <p id="addModuleChapterLabel" class="text-xs text-slate-400 mb-4"></p>
+            <div class="grid grid-cols-3 gap-3 mb-4">
+                <button data-mod-type="video"
+                    class="mod-type-btn group flex flex-col items-center gap-2 p-4 border-2 border-slate-200 rounded-xl hover:border-blue-400 hover:bg-blue-50/20 transition">
+                    <span
+                        class="material-symbols-outlined text-2xl text-slate-400 group-hover:text-blue-500">video_library</span>
+                    <span class="text-xs font-medium text-slate-500 group-hover:text-blue-600">Video</span>
+                </button>
+                <button data-mod-type="article"
+                    class="mod-type-btn group flex flex-col items-center gap-2 p-4 border-2 border-slate-200 rounded-xl hover:border-green-400 hover:bg-green-50/20 transition">
+                    <span
+                        class="material-symbols-outlined text-2xl text-slate-400 group-hover:text-green-500">article</span>
+                    <span class="text-xs font-medium text-slate-500 group-hover:text-green-600">Article</span>
+                </button>
+                <button data-mod-type="quiz"
+                    class="mod-type-btn group flex flex-col items-center gap-2 p-4 border-2 border-slate-200 rounded-xl hover:border-purple-400 hover:bg-purple-50/20 transition">
+                    <span
+                        class="material-symbols-outlined text-2xl text-slate-400 group-hover:text-purple-500">quiz</span>
+                    <span class="text-xs font-medium text-slate-500 group-hover:text-purple-600">Quiz</span>
+                </button>
+            </div>
+            <button id="cancelAddModuleBtn"
+                class="w-full py-2 text-sm text-slate-500 border border-slate-200 rounded-xl hover:bg-slate-50">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        /* ═══════════════════════════════════════════════════════════
+           STATE
+        ═══════════════════════════════════════════════════════════ */
+        let curriculum = [
+
+        ];
+
+        // Per-module data (questions, video, article content etc.)
+        let moduleData = {
+
+        };
+
+        let selectedModuleId = null;
+        let pendingAddChapterId = null; // for add-module modal
+        let idCounter = 100;
+
+        function uid() { return 'id_' + (++idCounter); }
+
+        /* ═══════════════════════════════════════════════════════════
+           TOAST
+        ═══════════════════════════════════════════════════════════ */
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            const bg = type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-amber-500' : 'bg-slate-800';
+            const icon = type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'check_circle';
+            t.className = `pointer-events-auto flex items-center gap-2 px-5 py-3 ${bg} text-white text-sm font-medium rounded-xl shadow-lg opacity-0 translate-y-2 transition-all duration-300`;
+            t.innerHTML = `<span class="material-symbols-outlined text-base">${icon}</span>${msg}`;
+            container.appendChild(t);
+            requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateY(0)'; });
+            setTimeout(() => {
+                t.style.opacity = '0'; t.style.transform = 'translateY(8px)';
+                setTimeout(() => t.remove(), 300);
+            }, 3000);
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           SIDEBAR RENDERING
+        ═══════════════════════════════════════════════════════════ */
+        const typeIcons = { video: 'video_library', article: 'article', quiz: 'quiz', play_circle: 'play_circle' };
+        const typeColors = { video: 'text-blue-500', article: 'text-green-500', quiz: 'text-purple-500' };
+
+        function renderSidebar() {
+            const container = document.getElementById('chaptersContainer');
+            container.innerHTML = '';
+
+            curriculum.forEach(chapter => {
+                const isActive = chapter.modules.some(m => m.id === selectedModuleId);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'space-y-3';
+                wrapper.dataset.chapterId = chapter.id;
+
+                wrapper.innerHTML = `
+          <div class="flex items-center justify-between text-xs font-medium uppercase tracking-wider ${isActive ? 'text-blue-600' : 'text-slate-400'}">
+            <span class="chapter-label cursor-default">${escHtml(chapter.title)}</span>
+            <div class="relative">
+              <button class="chapter-menu-btn material-symbols-outlined text-base hover:text-slate-600 transition rounded p-0.5 hover:bg-slate-100">more_vert</button>
+            </div>
+          </div>
+          <div class="space-y-2 modules-list">
+            ${chapter.modules.map(m => renderModuleItem(m)).join('')}
+          </div>
+        `;
+
+                container.appendChild(wrapper);
+
+                // Chapter menu
+                wrapper.querySelector('.chapter-menu-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showChapterMenu(chapter.id, e.currentTarget);
+                });
+
+                // Module clicks
+                wrapper.querySelectorAll('.module-item').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        if (e.target.closest('.del-btn')) return;
+                        selectModule(el.dataset.moduleId);
+                    });
+                    el.querySelector('.del-btn')?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        deleteModule(el.dataset.moduleId, chapter.id);
+                    });
+                });
+            });
+        }
+
+        function renderModuleItem(mod) {
+            const isSelected = mod.id === selectedModuleId;
+            const icon = typeIcons[mod.type] || 'article';
+            const color = typeColors[mod.type] || 'text-slate-400';
+
+            return `
+        <div data-module-id="${mod.id}" class="module-item flex items-center gap-3 p-3 rounded-xl cursor-pointer transition
+          ${isSelected ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'bg-white border border-slate-200 hover:border-blue-300 text-slate-700'}">
+          <span class="material-symbols-outlined text-base ${isSelected ? 'text-blue-100' : color}">${icon}</span>
+          <span class="text-sm font-medium truncate flex-1">${escHtml(mod.title)}</span>
+          <button class="del-btn shrink-0 p-0.5 rounded transition
+            ${isSelected ? 'hover:bg-blue-700 text-blue-200' : 'text-slate-300 hover:text-red-400 hover:bg-red-50'}">
+            <span class="material-symbols-outlined text-sm">close</span>
+          </button>
+        </div>
+      `;
+        }
+
+        function escHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           CHAPTER MENU (dropdown)
+        ═══════════════════════════════════════════════════════════ */
+        function showChapterMenu(chapterId, btnEl) {
+            document.querySelectorAll('.chapter-ctx-menu').forEach(m => m.remove());
+
+            const menu = document.createElement('div');
+            menu.className = 'chapter-ctx-menu absolute right-0 top-6 z-50 bg-white border border-slate-200 rounded-xl shadow-xl w-48 py-1.5 text-sm overflow-hidden';
+            menu.innerHTML = `
+        <div class="px-3 py-1.5 text-[10px] font-medium text-slate-400 uppercase tracking-wider">Add Module</div>
+        <button data-action="add-video" class="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700">
+          <span class="material-symbols-outlined text-base text-blue-400">video_library</span> Video
+        </button>
+        <button data-action="add-article" class="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700">
+          <span class="material-symbols-outlined text-base text-green-400">article</span> Article
+        </button>
+        <button data-action="add-quiz" class="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700">
+          <span class="material-symbols-outlined text-base text-purple-400">quiz</span> Quiz
+        </button>
+        <div class="my-1 border-t border-slate-100"></div>
+        <button data-action="rename" class="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-center gap-2 text-slate-700">
+          <span class="material-symbols-outlined text-base text-slate-400">edit</span> Rename Chapter
+        </button>
+        <button data-action="delete" class="w-full text-left px-4 py-2 hover:bg-red-50 flex items-center gap-2 text-red-500">
+          <span class="material-symbols-outlined text-base">delete</span> Delete Chapter
+        </button>
+      `;
+
+            btnEl.closest('.relative').appendChild(menu);
+
+            menu.querySelectorAll('button[data-action]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    menu.remove();
+                    const action = btn.dataset.action;
+                    if (action === 'rename') openRenameModal('chapter', chapterId);
+                    else if (action === 'delete') deleteChapter(chapterId);
+                    else if (action.startsWith('add-')) addModule(chapterId, action.replace('add-', ''));
+                });
+            });
+
+            setTimeout(() => {
+                const dismiss = () => { menu.remove(); document.removeEventListener('click', dismiss); };
+                document.addEventListener('click', dismiss);
+            }, 0);
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           CHAPTER OPERATIONS
+        ═══════════════════════════════════════════════════════════ */
+        document.getElementById('addChapterBtn').addEventListener('click', () => {
+            openRenameModal('new-chapter', null, 'New Chapter Title', 'New Chapter');
+        });
+
+        function deleteChapter(chapterId) {
+            const chapter = curriculum.find(c => c.id === chapterId);
+            if (!chapter) return;
+            if (chapter.modules.length > 0 && !confirm(`Delete "${chapter.title}" and all its ${chapter.modules.length} module(s)?`)) return;
+            // Deselect if selected module was in this chapter
+            if (chapter.modules.some(m => m.id === selectedModuleId)) {
+                selectedModuleId = null;
+                showSection('empty');
+            }
+            curriculum = curriculum.filter(c => c.id !== chapterId);
+            renderSidebar();
+            showToast('Chapter deleted');
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           MODULE OPERATIONS
+        ═══════════════════════════════════════════════════════════ */
+        function addModule(chapterId, type) {
+            const chapter = curriculum.find(c => c.id === chapterId);
+            if (!chapter) return;
+            const typeName = { video: 'Untitled Video', article: 'Untitled Article', quiz: 'Untitled Quiz' };
+            const mod = { id: uid(), type, title: typeName[type] || 'Untitled' };
+            chapter.modules.push(mod);
+            renderSidebar();
+            selectModule(mod.id);
+            // Auto-open rename
+            setTimeout(() => openRenameModal('module', mod.id, 'Module Title', mod.title), 200);
+        }
+
+        function deleteModule(moduleId, chapterId) {
+            const chapter = curriculum.find(c => c.id === chapterId);
+            if (!chapter) return;
+            chapter.modules = chapter.modules.filter(m => m.id !== moduleId);
+            if (selectedModuleId === moduleId) {
+                selectedModuleId = null;
+                showSection('empty');
+                document.getElementById('moduleHeader').classList.add('hidden');
+            }
+            renderSidebar();
+            showToast('Module removed');
+        }
+
+        function selectModule(moduleId) {
+            selectedModuleId = moduleId;
+            renderSidebar();
+
+            // Find module
+            let mod = null;
+            for (const ch of curriculum) {
+                mod = ch.modules.find(m => m.id === moduleId);
+                if (mod) break;
+            }
+            if (!mod) return;
+
+            // Update header
+            document.getElementById('moduleHeader').classList.remove('hidden');
+            document.getElementById('moduleTitleDisplay').textContent = mod.title;
+
+            const typeMeta = {
+                video: { label: 'Video Tutorial', icon: 'video_library', bg: 'bg-blue-50', color: 'text-blue-600' },
+                article: { label: 'Article', icon: 'article', bg: 'bg-green-50', color: 'text-green-600' },
+                quiz: { label: 'Quiz', icon: 'quiz', bg: 'bg-purple-50', color: 'text-purple-600' }
+            };
+            const meta = typeMeta[mod.type] || typeMeta.video;
+            document.getElementById('moduleTypeBadge').textContent = meta.label;
+            const iconEl = document.getElementById('moduleTypeIcon');
+            iconEl.className = `w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${meta.bg} ${meta.color}`;
+            iconEl.innerHTML = `<span class="material-symbols-outlined">${meta.icon}</span>`;
+
+            // Show section
+            if (mod.type === 'video') showSection('video');
+            else if (mod.type === 'article') showSection('article');
+            else if (mod.type === 'quiz') {
+                showSection('quiz');
+                renderQuestions(moduleId);
+            }
+        }
+
+        function showSection(type) {
+            const sections = ['empty', 'video', 'article', 'quiz-config', 'questions'];
+            sections.forEach(s => {
+                const el = document.getElementById(`section-${s}`);
+                if (el) el.classList.add('hidden');
+            });
+            document.getElementById('moduleHeader')?.classList.toggle('hidden', type === 'empty');
+
+            if (type === 'empty') {
+                document.getElementById('section-empty').classList.remove('hidden');
+            } else if (type === 'video') {
+                document.getElementById('section-video').classList.remove('hidden');
+            } else if (type === 'article') {
+                document.getElementById('section-article').classList.remove('hidden');
+            } else if (type === 'quiz') {
+                document.getElementById('section-quiz-config').classList.remove('hidden');
+                document.getElementById('section-questions').classList.remove('hidden');
+            }
+        }
+
+        /* Bottom "New Module" button — adds to last chapter or first one */
+        document.getElementById('addModuleBottomBtn').addEventListener('click', () => {
+            if (curriculum.length === 0) {
+                showToast('Please add a chapter first', 'warning');
+                return;
+            }
+            showAddModuleModal(curriculum[curriculum.length - 1].id);
+        });
+
+        function showAddModuleModal(chapterId) {
+            pendingAddChapterId = chapterId;
+            const ch = curriculum.find(c => c.id === chapterId);
+            document.getElementById('addModuleChapterLabel').textContent = ch ? `in "${ch.title}"` : '';
+            document.getElementById('addModuleModal').classList.remove('hidden');
+        }
+
+        document.getElementById('cancelAddModuleBtn').addEventListener('click', () => {
+            document.getElementById('addModuleModal').classList.add('hidden');
+        });
+
+        document.querySelectorAll('.mod-type-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.dataset.modType;
+                document.getElementById('addModuleModal').classList.add('hidden');
+                if (pendingAddChapterId) addModule(pendingAddChapterId, type);
+            });
+        });
+
+        /* ═══════════════════════════════════════════════════════════
+           RENAME MODAL
+        ═══════════════════════════════════════════════════════════ */
+        let renameContext = null; // { type: 'chapter'|'module'|'new-chapter', id }
+
+        function openRenameModal(type, id, titleText = 'Rename', currentValue = '') {
+            renameContext = { type, id };
+            document.getElementById('renameModalTitle').textContent = titleText || 'Rename';
+            const input = document.getElementById('renameInput');
+            input.value = currentValue;
+            document.getElementById('renameModal').classList.remove('hidden');
+            setTimeout(() => { input.focus(); input.select(); }, 50);
+        }
+
+        document.getElementById('renameCancelBtn').addEventListener('click', () => {
+            document.getElementById('renameModal').classList.add('hidden');
+        });
+
+        document.getElementById('renameModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('renameModal'))
+                document.getElementById('renameModal').classList.add('hidden');
+        });
+
+        document.getElementById('renameInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('renameConfirmBtn').click();
+            if (e.key === 'Escape') document.getElementById('renameCancelBtn').click();
+        });
+
+        document.getElementById('renameConfirmBtn').addEventListener('click', () => {
+            const val = document.getElementById('renameInput').value.trim();
+            if (!val) return showToast('Name cannot be empty', 'warning');
+            document.getElementById('renameModal').classList.add('hidden');
+
+            if (!renameContext) return;
+
+            if (renameContext.type === 'chapter') {
+                const ch = curriculum.find(c => c.id === renameContext.id);
+                if (ch) { ch.title = val; renderSidebar(); showToast('Chapter renamed'); }
+            } else if (renameContext.type === 'module') {
+                for (const ch of curriculum) {
+                    const mod = ch.modules.find(m => m.id === renameContext.id);
+                    if (mod) {
+                        mod.title = val;
+                        if (selectedModuleId === mod.id) document.getElementById('moduleTitleDisplay').textContent = val;
+                        break;
+                    }
+                }
+                renderSidebar();
+                showToast('Module renamed');
+            } else if (renameContext.type === 'new-chapter') {
+                curriculum.push({ id: uid(), title: val, modules: [] });
+                renderSidebar();
+                showToast('Chapter added');
+            }
+        });
+
+        // Rename module from right panel header
+        document.getElementById('renameModuleBtn').addEventListener('click', () => {
+            if (!selectedModuleId) return;
+            let mod = null;
+            for (const ch of curriculum) { mod = ch.modules.find(m => m.id === selectedModuleId); if (mod) break; }
+            if (mod) openRenameModal('module', selectedModuleId, 'Rename Module', mod.title);
+        });
+
+        // Step 1 back navigation
+        document.getElementById('goStep1').addEventListener('click', () => window.location.href = 'step1.html');
+
+        /* ═══════════════════════════════════════════════════════════
+           VIDEO UPLOAD
+        ═══════════════════════════════════════════════════════════ */
+        const videoDropzone = document.getElementById('videoDropzone');
+        const videoInput = document.getElementById('videoInput');
+
+        videoDropzone.addEventListener('click', (e) => {
+            if (!e.target.closest('#removeVideoBtn')) videoInput.click();
+        });
+
+        videoDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault(); videoDropzone.classList.add('dropzone-active');
+        });
+        videoDropzone.addEventListener('dragleave', (e) => {
+            if (!videoDropzone.contains(e.relatedTarget)) videoDropzone.classList.remove('dropzone-active');
+        });
+        videoDropzone.addEventListener('drop', (e) => {
+            e.preventDefault(); videoDropzone.classList.remove('dropzone-active');
+            if (e.dataTransfer.files[0]) handleVideoUpload(e.dataTransfer.files[0]);
+        });
+        videoInput.addEventListener('change', () => {
+            if (videoInput.files[0]) handleVideoUpload(videoInput.files[0]);
+        });
+
+        function handleVideoUpload(file) {
+            const valid = ['video/mp4', 'video/webm', 'video/quicktime', 'video/mov'];
+            if (!valid.includes(file.type) && !file.name.match(/\.(mp4|mov|webm)$/i)) {
+                showToast('Unsupported format. Use MP4, MOV, or WEBM.', 'error'); return;
+            }
+            document.getElementById('videoUploadPlaceholder').classList.add('hidden');
+            document.getElementById('videoUploadReady').classList.remove('hidden');
+            document.getElementById('videoFileName').textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
+            showToast(`"${file.name}" uploaded`);
+        }
+
+        document.getElementById('removeVideoBtn')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            videoInput.value = '';
+            document.getElementById('videoUploadPlaceholder').classList.remove('hidden');
+            document.getElementById('videoUploadReady').classList.add('hidden');
+        });
+
+        // External link toggle
+        document.getElementById('externalLinkBtn').addEventListener('click', () => {
+            document.getElementById('externalLinkInput').classList.toggle('hidden');
+        });
+
+        document.getElementById('saveExternalLink').addEventListener('click', () => {
+            const url = document.getElementById('externalLinkValue').value.trim();
+            if (!url) return;
+            document.getElementById('externalLinkInput').classList.add('hidden');
+            showToast('External link saved');
+        });
+
+        // Transcript toggle
+        document.getElementById('transcriptBtn').addEventListener('click', () => {
+            document.getElementById('transcriptArea').classList.toggle('hidden');
+        });
+
+        /* ═══════════════════════════════════════════════════════════
+           THRESHOLD SLIDER
+        ═══════════════════════════════════════════════════════════ */
+        const slider = document.getElementById('thresholdSlider');
+        slider.addEventListener('input', () => {
+            const v = slider.value;
+            document.getElementById('thresholdValue').textContent = v + '%';
+            document.getElementById('thresholdBar').style.width = v + '%';
+        });
+
+        /* Duration inputs validation */
+        document.getElementById('durationSecs').addEventListener('change', (e) => {
+            let v = parseInt(e.target.value) || 0;
+            v = Math.min(59, Math.max(0, v));
+            e.target.value = v;
+        });
+
+        /* ═══════════════════════════════════════════════════════════
+           QUIZ QUESTIONS
+        ═══════════════════════════════════════════════════════════ */
+        function getQuestions(moduleId) {
+            if (!moduleData[moduleId]) moduleData[moduleId] = { questions: [] };
+            return moduleData[moduleId].questions;
+        }
+
+        function renderQuestions(moduleId) {
+            const questions = getQuestions(moduleId);
+            const list = document.getElementById('questionsList');
+            list.innerHTML = '';
+
+            questions.forEach((q, qi) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden';
+                card.dataset.qid = q.id;
+
+                const typeLabel = q.type === 'mc' ? 'Multiple Choice' : 'True / False';
+                const typeIcon = q.type === 'mc' ? 'checklist' : 'rule';
+
+                card.innerHTML = `
+          <div class="p-5 border-b border-slate-100 bg-slate-50/30 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-sm">
+                <span class="material-symbols-outlined text-base">${typeIcon}</span>
+              </div>
+              <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Q${qi + 1} • ${typeLabel}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="del-q-btn p-1.5 text-slate-400 hover:text-red-500 transition-colors bg-white rounded-lg border border-slate-100 shadow-sm" title="Delete question">
+                <span class="material-symbols-outlined text-base">delete</span>
+              </button>
+            </div>
+          </div>
+          <div class="p-6 space-y-5">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">Question Text</label>
+              <input type="text" class="q-text w-full rounded-xl border-slate-200 bg-slate-50/50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 px-4 py-3 text-sm outline-none" value="${escHtml(q.text)}" placeholder="Enter your question...">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">Answer Options</label>
+              <div class="options-list space-y-2">
+                ${q.options.map((opt, oi) => renderOptionHTML(opt, oi, q.id)).join('')}
+              </div>
+              ${q.type === 'mc' ? `<button class="add-opt-btn flex items-center gap-1 text-blue-600 text-xs font-medium mt-3 hover:underline">
+                <span class="material-symbols-outlined text-base">add_circle</span> Add Option
+              </button>` : ''}
+            </div>
+          </div>
+        `;
+
+                list.appendChild(card);
+
+                // Delete question
+                card.querySelector('.del-q-btn').addEventListener('click', () => {
+                    const qs = getQuestions(moduleId);
+                    const idx = qs.findIndex(x => x.id === q.id);
+                    if (idx >= 0) qs.splice(idx, 1);
+                    renderQuestions(moduleId);
+                    updateQuestionCount(moduleId);
+                });
+
+                // Save question text
+                card.querySelector('.q-text').addEventListener('input', (e) => { q.text = e.target.value; });
+
+                // Correct answer selection
+                card.querySelectorAll('.mark-correct-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const optId = btn.dataset.optId;
+                        q.options.forEach(o => o.correct = (o.id === optId));
+                        renderQuestions(moduleId);
+                    });
+                });
+
+                // Add option (MC only)
+                card.querySelector('.add-opt-btn')?.addEventListener('click', () => {
+                    q.options.push({ id: uid(), text: '', correct: false });
+                    renderQuestions(moduleId);
+                });
+
+                // Delete option
+                card.querySelectorAll('.del-opt-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const optId = btn.dataset.optId;
+                        if (q.options.length <= 2) { showToast('Need at least 2 options', 'warning'); return; }
+                        q.options = q.options.filter(o => o.id !== optId);
+                        renderQuestions(moduleId);
+                    });
+                });
+
+                // Option text change
+                card.querySelectorAll('.opt-text').forEach(input => {
+                    input.addEventListener('input', (e) => {
+                        const optId = e.target.dataset.optId;
+                        const opt = q.options.find(o => o.id === optId);
+                        if (opt) opt.text = e.target.value;
+                    });
+                });
+            });
+
+            updateQuestionCount(moduleId);
+        }
+
+        function renderOptionHTML(opt, index, qid) {
+            const letter = String.fromCharCode(65 + index);
+            return `
+        <div class="flex items-center gap-3 ${opt.correct ? 'option-correct' : ''}">
+          <button class="mark-correct-btn shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition
+            ${opt.correct ? 'border-blue-600 bg-blue-600' : 'border-slate-300 hover:border-blue-400'}"
+            data-opt-id="${opt.id}" title="${opt.correct ? 'Correct answer' : 'Mark as correct'}">
+            ${opt.correct ? '<div class="w-2 h-2 bg-white rounded-full"></div>' : ''}
+          </button>
+          <input type="text" class="opt-text flex-1 rounded-xl border border-slate-200 bg-slate-50/50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 px-4 py-2.5 text-sm outline-none ${opt.correct ? 'border-blue-300 bg-blue-50/30 font-medium' : ''}"
+            value="${escHtml(opt.text)}" placeholder="Option ${letter}..." data-opt-id="${opt.id}">
+          ${opt.correct ? '<span class="text-[10px] font-medium text-blue-600 bg-white px-2 py-1 rounded-full border border-blue-200 shrink-0">Correct</span>' : ''}
+          <button class="del-opt-btn shrink-0 text-slate-300 hover:text-red-400 transition" data-opt-id="${opt.id}" title="Remove option">
+            <span class="material-symbols-outlined text-base">close</span>
+          </button>
+        </div>
+      `;
+        }
+
+        function updateQuestionCount(moduleId) {
+            const count = getQuestions(moduleId).length;
+            document.getElementById('questionCountBadge').textContent = `${count} question${count !== 1 ? 's' : ''}`;
+        }
+
+        // Add Multiple Choice question
+        document.getElementById('addMCBtn').addEventListener('click', () => {
+            if (!selectedModuleId) return;
+            const qs = getQuestions(selectedModuleId);
+            qs.push({
+                id: uid(), type: 'mc', text: '',
+                options: [
+                    { id: uid(), text: '', correct: false },
+                    { id: uid(), text: '', correct: false }
+                ]
+            });
+            renderQuestions(selectedModuleId);
+        });
+
+        // Add True/False question
+        document.getElementById('addTFBtn').addEventListener('click', () => {
+            if (!selectedModuleId) return;
+            const qs = getQuestions(selectedModuleId);
+            qs.push({
+                id: uid(), type: 'tf', text: '',
+                options: [
+                    { id: uid(), text: 'True', correct: true },
+                    { id: uid(), text: 'False', correct: false }
+                ]
+            });
+            renderQuestions(selectedModuleId);
+        });
+
+        /* ═══════════════════════════════════════════════════════════
+           SAVE DRAFT
+        ═══════════════════════════════════════════════════════════ */
+        function saveDraft() {
+            try {
+                const data = JSON.parse(localStorage.getItem('courseData') || '{}');
+                data.curriculum = curriculum;
+                localStorage.setItem('courseData', JSON.stringify(data));
+            } catch (e) { }
+        }
+
+        [document.getElementById('saveDraftHeader'), document.getElementById('saveDraftFooter')].forEach(btn => {
+            btn?.addEventListener('click', () => { saveDraft(); showToast('Draft saved!'); });
+        });
+
+        /* ═══════════════════════════════════════════════════════════
+           NAVIGATION
+        ═══════════════════════════════════════════════════════════ */
+        document.getElementById('headerBackBtn').addEventListener('click', () => {
+            saveDraft(); window.location.href = 'step1.html';
+        });
+        document.getElementById('footerBackBtn').addEventListener('click', () => {
+            saveDraft(); window.location.href = 'step1.html';
+        });
+        document.getElementById('saveContinue').addEventListener('click', () => {
+            if (curriculum.length === 0) { showToast('Add at least one chapter to continue', 'warning'); return; }
+            saveDraft();
+            showToast('Curriculum saved! Moving to Review…');
+            setTimeout(() => window.location.href = 'step3.html', 800);
+        });
+
+        /* ═══════════════════════════════════════════════════════════
+           INIT
+        ═══════════════════════════════════════════════════════════ */
+        renderSidebar();
+        // Auto-select first module
+        selectModule('m3');
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Review & Publish · Lumos Learning</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@100..700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Work Sans', 'sans-serif'] },
+                    colors: { brand: { light: '#f0f4ff', DEFAULT: '#2563eb', dark: '#1e40af' } },
+                    borderRadius: { 'xl': '0.75rem', '2xl': '1rem', '3xl': '1.5rem' }
+                }
+            }
+        }
+    </script>
+    <style>
+        *:focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: 2px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 8px;
+        }
+
+        /* Publish success animation */
+        @keyframes scaleIn {
+            from {
+                transform: scale(.6);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .animate-scale-in {
+            animation: scaleIn .4s cubic-bezier(.34, 1.56, .64, 1) forwards;
+        }
+
+        .animate-slide-up {
+            animation: slideUp .4s ease forwards;
+        }
+
+        /* Confetti burst via CSS */
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-20px) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .confetti-piece {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            animation: confetti-fall linear forwards;
+            pointer-events: none;
+            z-index: 200;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 font-sans text-slate-800 flex h-screen overflow-hidden">
+
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-white">
+
+        <!-- ── HEADER ─────────────────────────────────────────────── -->
+        <header class="border-b border-slate-200 bg-white/90 backdrop-blur-sm sticky top-0 z-20 shrink-0">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+
+                <div class="flex items-center gap-4 sm:gap-8">
+                    <button id="headerBackBtn"
+                        class="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 transition"
+                        aria-label="Go back">
+                        <span class="material-symbols-outlined text-sm">arrow_back</span>
+                    </button>
+
+                    <div class="flex items-center gap-2 sm:gap-6 text-sm">
+                        <!-- Step 1 — done, clickable -->
+                        <div class="flex items-center gap-2 cursor-pointer" id="goStep1">
+                            <div
+                                class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-semibold shadow-sm">
+                                <span class="material-symbols-outlined text-xs">check</span>
+                            </div>
+                            <div class="hidden sm:block">
+                                <p class="font-medium text-blue-700">Step 1</p>
+                                <p class="text-xs text-slate-500">Basic info</p>
+                            </div>
+                        </div>
+                        <div class="hidden sm:block w-8 h-px bg-blue-300"></div>
+
+                        <!-- Step 2 — done, clickable -->
+                        <div class="flex items-center gap-2 cursor-pointer" id="goStep2">
+                            <div
+                                class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-semibold shadow-sm">
+                                <span class="material-symbols-outlined text-xs">check</span>
+                            </div>
+                            <div class="hidden sm:block">
+                                <p class="font-medium text-blue-700">Step 2</p>
+                                <p class="text-xs text-slate-500">Curriculum</p>
+                            </div>
+                        </div>
+                        <div class="hidden sm:block w-8 h-px bg-blue-300"></div>
+
+                        <!-- Step 3 — active -->
+                        <div class="flex items-center gap-2">
+                            <div
+                                class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-semibold shadow-sm">
+                                3</div>
+                            <div class="hidden sm:block">
+                                <p class="font-medium text-blue-700">Step 3</p>
+                                <p class="text-xs text-slate-500">Review & publish</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button id="saveDraftBtn"
+                        class="hidden sm:inline-flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 shadow-sm transition">
+                        <span class="material-symbols-outlined text-lg">save</span> Save draft
+                    </button>
+                    <div
+                        class="w-9 h-9 rounded-xl border-2 border-slate-100 overflow-hidden bg-slate-200 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-slate-500 text-base">person</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ── MAIN CONTENT ──────────────────────────────────────── -->
+        <div id="mainContent" class="flex-1 overflow-y-auto bg-slate-50/50 p-6 lg:p-8 scrollbar-thin">
+            <div class="max-w-6xl mx-auto">
+
+                <!-- Page title -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Review & Publish</h2>
+                    <p class="mt-1 text-sm text-slate-500">Double-check your course details and curriculum before going
+                        live.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                    <!-- LEFT: Course Preview -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <h3 class="text-xs font-medium text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <span class="material-symbols-outlined text-base">visibility</span>
+                            Course Preview
+                        </h3>
+
+                        <div
+                            class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden hover:shadow-md transition">
+                            <!-- Thumbnail -->
+                            <div id="previewThumbnail"
+                                class="w-full aspect-video bg-gradient-to-br from-blue-500 to-indigo-700 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-6xl text-white/30">menu_book</span>
+                            </div>
+                            <div class="p-6">
+                                <!-- Category badge -->
+                                <span id="previewCategory"
+                                    class="inline-block px-3 py-1 rounded-lg bg-blue-50 text-blue-600 text-[10px] font-medium mb-3 uppercase tracking-wider">General</span>
+
+                                <h4 id="previewTitle" class="text-lg font-bold text-slate-800 mb-2">Untitled Course</h4>
+                                <p id="previewDescription" class="text-sm text-slate-500 mb-4 line-clamp-2">No
+                                    description provided.</p>
+
+                                <div
+                                    class="flex items-center justify-between border-t border-slate-100 pt-4 gap-4 flex-wrap">
+                                    <div
+                                        class="flex items-center gap-1.5 text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                        <span class="material-symbols-outlined text-base">layers</span>
+                                        <span id="previewModuleCount">0 modules</span>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-1.5 text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                        <span class="material-symbols-outlined text-base">signal_cellular_alt</span>
+                                        <span id="previewDifficulty">Beginner</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick edit links -->
+                        <div class="flex gap-3">
+                            <button id="editStep1Btn"
+                                class="flex-1 py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 hover:border-blue-300 transition flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-base">edit</span> Edit Basics
+                            </button>
+                            <button id="editStep2Btn"
+                                class="flex-1 py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 hover:border-blue-300 transition flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-base">menu_book</span> Edit Curriculum
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Checklist -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <h3 class="text-xs font-medium text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <span class="material-symbols-outlined text-base">fact_check</span>
+                            Submission Checklist
+                        </h3>
+
+                        <div class="space-y-4" id="checklistContainer">
+
+                            <!-- Basic Info Item -->
+                            <div id="checkBasicInfo"
+                                class="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm flex items-start justify-between hover:border-blue-200 transition">
+                                <div class="flex gap-4">
+                                    <div id="checkBasicInfoIcon"
+                                        class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <span class="material-symbols-outlined text-xl">check_circle</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-slate-800">Basic Information</h4>
+                                        <p class="text-xs text-slate-400 mt-0.5 uppercase font-medium tracking-wider">
+                                            Title, Category, Description</p>
+                                        <div class="mt-3 flex flex-wrap gap-x-4 gap-y-2" id="checkBasicInfoDetails">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="window.location.href='step1.html'"
+                                    class="text-blue-600 text-xs font-medium uppercase tracking-wider hover:underline shrink-0">Edit</button>
+                            </div>
+
+                            <!-- Curriculum Item -->
+                            <div id="checkCurriculum"
+                                class="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm flex items-start justify-between hover:border-blue-200 transition">
+                                <div class="flex gap-4">
+                                    <div id="checkCurriculumIcon"
+                                        class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <span class="material-symbols-outlined text-xl">check_circle</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-slate-800">Curriculum & Content</h4>
+                                        <p id="checkCurriculumSub"
+                                            class="text-xs text-slate-400 mt-0.5 uppercase font-medium tracking-wider">—
+                                        </p>
+                                        <div class="mt-3 flex flex-wrap gap-2" id="checkCurriculumTags"></div>
+                                    </div>
+                                </div>
+                                <button onclick="window.location.href='step2.html'"
+                                    class="text-blue-600 text-xs font-medium uppercase tracking-wider hover:underline shrink-0">Edit</button>
+                            </div>
+
+                            <!-- Terms -->
+                            <div class="p-5 rounded-2xl bg-blue-50/50 border border-blue-100 shadow-sm">
+                                <div class="flex gap-3">
+                                    <div class="pt-0.5">
+                                        <input type="checkbox" id="termsCheck"
+                                            class="w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500/20 cursor-pointer">
+                                    </div>
+                                    <label for="termsCheck"
+                                        class="text-sm text-slate-600 leading-relaxed cursor-pointer">
+                                        I confirm that I own the rights to all content uploaded and agree to the
+                                        <a href="#" class="text-blue-600 font-medium underline hover:no-underline"
+                                            onclick="return false">Instructor Terms of Service</a>
+                                        and
+                                        <a href="#" class="text-blue-600 font-medium underline hover:no-underline"
+                                            onclick="return false">Content Quality Standards</a>.
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ── SUCCESS SCREEN (hidden) ───────────────────────────── -->
+        <div id="successScreen"
+            class="hidden flex-1 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50/50 p-8">
+            <div class="text-center max-w-md animate-slide-up">
+                <div
+                    class="w-24 h-24 rounded-full bg-white shadow-lg flex items-center justify-center mx-auto mb-6 animate-scale-in">
+                    <span class="material-symbols-outlined text-5xl text-blue-600"
+                        style="font-variation-settings: 'FILL' 1">rocket_launch</span>
+                </div>
+                <h2 class="text-3xl font-bold text-slate-800 mb-3">Course Published!</h2>
+                <p class="text-slate-500 mb-2">Your course <strong id="successCourseTitle"
+                        class="text-slate-700"></strong> is now live.</p>
+                <p class="text-sm text-slate-400 mb-8">Students can now enroll and start learning.</p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="window.location.href='step1.html'"
+                        class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition shadow-sm shadow-blue-200">
+                        <span class="material-symbols-outlined text-base">add</span> Create Another Course
+                    </button>
+                    <button
+                        class="inline-flex items-center gap-2 px-6 py-3 border border-slate-200 bg-white text-slate-700 rounded-xl font-medium hover:bg-slate-50 transition">
+                        <span class="material-symbols-outlined text-base">visibility</span> View Course
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── STICKY FOOTER ─────────────────────────────────────── -->
+        <footer id="mainFooter" class="bg-white/80 backdrop-blur-sm border-t border-slate-200 py-3 shrink-0">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+                <button id="footerBackBtn"
+                    class="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition">
+                    <span class="material-symbols-outlined text-sm">arrow_back</span> Back to Curriculum
+                </button>
+                <div class="flex items-center gap-4">
+                    <p class="text-xs text-slate-400 hidden sm:block" id="footerStatus">Step 3 of 3 • Review</p>
+                    <button id="saveDraftFooter"
+                        class="hidden sm:inline-flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 bg-white hover:bg-slate-50 shadow-sm transition">
+                        <span class="material-symbols-outlined text-base">save</span> Save draft
+                    </button>
+                    <button id="publishBtn"
+                        class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl shadow-sm shadow-blue-200 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span class="material-symbols-outlined text-base">rocket_launch</span> Publish Now
+                    </button>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- ── PUBLISH CONFIRM MODAL ─────────────────────────────── -->
+    <div id="publishModal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-md p-8 text-center">
+            <div class="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-5">
+                <span class="material-symbols-outlined text-3xl text-blue-600"
+                    style="font-variation-settings: 'FILL' 1">rocket_launch</span>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">Ready to publish?</h3>
+            <p class="text-sm text-slate-500 mb-1">You're about to publish <strong id="confirmCourseTitle"
+                    class="text-slate-700 font-semibold"></strong>.</p>
+            <p class="text-sm text-slate-400 mb-7">This will make it visible to students immediately. You can still edit
+                it after publishing.</p>
+            <div class="flex gap-3">
+                <button id="cancelPublishBtn"
+                    class="flex-1 py-3 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Cancel</button>
+                <button id="confirmPublishBtn"
+                    class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-medium transition flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-base">rocket_launch</span> Publish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TOAST ─────────────────────────────────────────────── -->
+    <div id="toastContainer"
+        class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none">
+    </div>
+
+    <script>
+        /* ─── Toast ──────────────────────────────────────────────── */
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            const bg = type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-amber-500' : 'bg-slate-800';
+            const icon = type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'check_circle';
+            t.className = `pointer-events-auto flex items-center gap-2 px-5 py-3 ${bg} text-white text-sm font-medium rounded-xl shadow-lg opacity-0 translate-y-2 transition-all duration-300`;
+            t.innerHTML = `<span class="material-symbols-outlined text-base">${icon}</span>${msg}`;
+            container.appendChild(t);
+            requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateY(0)'; });
+            setTimeout(() => {
+                t.style.opacity = '0'; t.style.transform = 'translateY(8px)';
+                setTimeout(() => t.remove(), 300);
+            }, 3000);
+        }
+
+        /* ─── Load course data from localStorage ─────────────────── */
+        function loadCourseData() {
+            try {
+                const data = JSON.parse(localStorage.getItem('courseData') || '{}');
+
+                // Preview card
+                const title = data.title || 'Untitled Course';
+                document.getElementById('previewTitle').textContent = title;
+                document.getElementById('previewCategory').textContent = data.category || 'General';
+                document.getElementById('previewDescription').textContent = data.description || 'No description provided.';
+                document.getElementById('previewDifficulty').textContent = data.difficulty || 'Beginner';
+
+                // Count modules
+                const chapters = data.curriculum || [];
+                const totalModules = chapters.reduce((sum, ch) => sum + (ch.modules?.length || 0), 0);
+                const totalChapters = chapters.length;
+                document.getElementById('previewModuleCount').textContent =
+                    `${totalChapters} chapter${totalChapters !== 1 ? 's' : ''} • ${totalModules} module${totalModules !== 1 ? 's' : ''}`;
+
+                // Checklist — Basic Info
+                const hasTitle = !!(data.title?.trim());
+                const hasDesc = !!(data.description?.trim());
+                const basicOk = hasTitle;
+                styleCheckItem('checkBasicInfoIcon', basicOk);
+                const basicDetails = document.getElementById('checkBasicInfoDetails');
+                basicDetails.innerHTML = checkTag(hasTitle, 'Title set') + checkTag(hasDesc, 'Description written') + checkTag(!!(data.category), 'Category selected');
+
+                // Checklist — Curriculum
+                const currOk = totalModules > 0;
+                styleCheckItem('checkCurriculumIcon', currOk);
+                document.getElementById('checkCurriculumSub').textContent =
+                    currOk ? `${totalChapters} Chapter${totalChapters !== 1 ? 's' : ''} · ${totalModules} Module${totalModules !== 1 ? 's' : ''}` : 'No modules added yet';
+
+                const tags = document.getElementById('checkCurriculumTags');
+                tags.innerHTML = '';
+                if (chapters.length > 0) {
+                    // Count by type
+                    let videos = 0, quizzes = 0, articles = 0;
+                    chapters.forEach(ch => ch.modules?.forEach(m => {
+                        if (m.type === 'video') videos++;
+                        else if (m.type === 'quiz') quizzes++;
+                        else if (m.type === 'article') articles++;
+                    }));
+                    if (videos > 0) tags.insertAdjacentHTML('beforeend', pill(`${videos} Video${videos !== 1 ? 's' : ''}`));
+                    if (articles > 0) tags.insertAdjacentHTML('beforeend', pill(`${articles} Article${articles !== 1 ? 's' : ''}`));
+                    if (quizzes > 0) tags.insertAdjacentHTML('beforeend', pill(`${quizzes} Quiz${quizzes !== 1 ? 'zes' : ''}`));
+                }
+
+                // Footer status
+                const allGood = basicOk && currOk;
+                document.getElementById('footerStatus').textContent = allGood
+                    ? 'Step 3 of 3 • Ready to publish'
+                    : 'Step 3 of 3 • Action required';
+
+                return data;
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function checkTag(ok, label) {
+            return `<span class="flex items-center gap-1 text-xs ${ok ? 'text-slate-500' : 'text-amber-500'}">
+        <span class="material-symbols-outlined ${ok ? 'text-green-500' : 'text-amber-400'} text-sm">${ok ? 'done' : 'warning'}</span>
+        ${label}
+      </span>`;
+        }
+
+        function pill(text) {
+            return `<span class="px-3 py-1 rounded-lg bg-slate-50 border border-slate-100 text-[10px] font-medium text-slate-600 uppercase">${text}</span>`;
+        }
+
+        function styleCheckItem(iconId, ok) {
+            const wrap = document.getElementById(iconId);
+            if (ok) {
+                wrap.className = 'bg-green-100 text-green-600 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0';
+                wrap.innerHTML = '<span class="material-symbols-outlined text-xl" style="font-variation-settings: \'FILL\' 1">check_circle</span>';
+            } else {
+                wrap.className = 'bg-amber-100 text-amber-600 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0';
+                wrap.innerHTML = '<span class="material-symbols-outlined text-xl">warning</span>';
+            }
+        }
+
+        /* ─── Terms checkbox ─────────────────────────────────────── */
+        document.getElementById('termsCheck').addEventListener('change', (e) => {
+            document.getElementById('publishBtn').classList.toggle('opacity-50', !e.target.checked);
+            document.getElementById('publishBtn').classList.toggle('cursor-not-allowed', !e.target.checked);
+        });
+
+        /* ─── Publish flow ───────────────────────────────────────── */
+        document.getElementById('publishBtn').addEventListener('click', () => {
+            if (!document.getElementById('termsCheck').checked) {
+                showToast('Please accept the terms before publishing', 'warning');
+                document.getElementById('termsCheck').closest('.p-5').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                document.getElementById('termsCheck').closest('.p-5').classList.add('ring-2', 'ring-amber-400', 'ring-offset-1');
+                setTimeout(() => document.getElementById('termsCheck').closest('.p-5').classList.remove('ring-2', 'ring-amber-400', 'ring-offset-1'), 2000);
+                return;
+            }
+            const data = loadCourseData();
+            const title = data.title || 'Untitled Course';
+            document.getElementById('confirmCourseTitle').textContent = `"${title}"`;
+            document.getElementById('publishModal').classList.remove('hidden');
+        });
+
+        document.getElementById('cancelPublishBtn').addEventListener('click', () => {
+            document.getElementById('publishModal').classList.add('hidden');
+        });
+
+        document.getElementById('publishModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('publishModal'))
+                document.getElementById('publishModal').classList.add('hidden');
+        });
+
+        document.getElementById('confirmPublishBtn').addEventListener('click', () => {
+            document.getElementById('publishModal').classList.add('hidden');
+
+            // Start "publishing" with a brief loading state
+            const btn = document.getElementById('confirmPublishBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined text-base animate-spin">progress_activity</span> Publishing…';
+
+            setTimeout(() => {
+                const data = JSON.parse(localStorage.getItem('courseData') || '{}');
+                const title = data.title || 'Untitled Course';
+                document.getElementById('successCourseTitle').textContent = `"${title}"`;
+
+                // Show success
+                document.getElementById('mainContent').classList.add('hidden');
+                document.getElementById('mainFooter').classList.add('hidden');
+                document.getElementById('successScreen').classList.remove('hidden');
+                document.getElementById('successScreen').classList.add('flex');
+
+                // Fire confetti
+                launchConfetti();
+
+                // Clear draft
+                localStorage.removeItem('courseData');
+            }, 1500);
+        });
+
+        /* ─── Confetti ───────────────────────────────────────────── */
+        function launchConfetti() {
+            const colors = ['#2563eb', '#7c3aed', '#059669', '#d97706', '#dc2626', '#0891b2'];
+            for (let i = 0; i < 60; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + 'vw';
+                piece.style.top = '-10px';
+                piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                piece.style.animationDelay = (Math.random() * .8) + 's';
+                piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+                piece.style.borderRadius = Math.random() > .5 ? '50%' : '2px';
+                document.body.appendChild(piece);
+                setTimeout(() => piece.remove(), 4000);
+            }
+        }
+
+        /* ─── Navigation ────────────────────────────────────────── */
+        document.getElementById('headerBackBtn').addEventListener('click', () => window.location.href = 'step2.html');
+        document.getElementById('footerBackBtn').addEventListener('click', () => window.location.href = 'step2.html');
+        document.getElementById('goStep1').addEventListener('click', () => window.location.href = 'step1.html');
+        document.getElementById('goStep2').addEventListener('click', () => window.location.href = 'step2.html');
+        document.getElementById('editStep1Btn').addEventListener('click', () => window.location.href = 'step1.html');
+        document.getElementById('editStep2Btn').addEventListener('click', () => window.location.href = 'step2.html');
+
+        [document.getElementById('saveDraftBtn'), document.getElementById('saveDraftFooter')].forEach(btn => {
+            btn?.addEventListener('click', () => showToast('Draft saved!'));
+        });
+
+        /* ─── Init ──────────────────────────────────────────────── */
+        loadCourseData();
+        // Set terms unchecked by default, so user must confirm
+        document.getElementById('termsCheck').checked = false;
+    </script>
+</body>
+
+</html>
